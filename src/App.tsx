@@ -3,6 +3,8 @@ import { Home } from '@/pages/Home'
 import { Projects } from '@/pages/Projects'
 import { ProjectDetail } from '@/pages/ProjectDetail'
 import { Games } from '@/pages/Games'
+import { Progression } from '@/pages/Progression'
+import { ShellPortal } from '@/components/hero/ShellPortal'
 import '@/styles/globals.css'
 
 export default function App() {
@@ -13,7 +15,9 @@ export default function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/games" element={<Games />} />
+        <Route path="/progression" element={<Progression />} />
       </Routes>
+      <ShellPortal />
     </BrowserRouter>
   )
 }

@@ -98,6 +98,35 @@ export function Navbar() {
         >
           Games
         </Link>
+        <Link
+          to="/progression"
+          style={{
+            color: pathname === '/progression' ? 'var(--accent)' : 'var(--text-muted)',
+            textDecoration: 'none',
+            fontSize: '0.875rem',
+            fontFamily: 'var(--font-mono)',
+            letterSpacing: '0.05em',
+            padding: '4px 0',
+            borderBottom: pathname === '/progression'
+              ? '1px solid var(--accent)'
+              : '1px solid transparent',
+            transition: 'color 0.2s, border-color 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            if (pathname !== '/progression') {
+              e.currentTarget.style.color = 'var(--text-primary)'
+              e.currentTarget.style.borderBottomColor = 'var(--accent)'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (pathname !== '/progression') {
+              e.currentTarget.style.color = 'var(--text-muted)'
+              e.currentTarget.style.borderBottomColor = 'transparent'
+            }
+          }}
+        >
+          Progression
+        </Link>
       </div>
     </motion.nav>
   )

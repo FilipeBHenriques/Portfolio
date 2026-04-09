@@ -87,7 +87,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             {/* Video placeholder */}
             <div style={{
               height: '240px',
-              background: 'linear-gradient(135deg, rgba(57,255,20,0.07) 0%, rgba(57,255,20,0.02) 100%)',
+              background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.07) 0%, rgba(var(--accent-rgb), 0.02) 100%)',
               borderBottom: '1px solid var(--border)',
               display: 'flex',
               alignItems: 'center',
@@ -98,20 +98,20 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 <div style={{
                   width: '48px',
                   height: '48px',
-                  border: '1px solid rgba(57,255,20,0.3)',
+                  border: '1px solid rgba(var(--accent-rgb), 0.3)',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   margin: '0 auto 0.75rem',
-                  color: 'rgba(57,255,20,0.5)',
+                  color: 'rgba(var(--accent-rgb), 0.5)',
                 }}>
                   ▶
                 </div>
                 <span style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.65rem',
-                  color: 'rgba(57,255,20,0.3)',
+                  color: 'rgba(var(--accent-rgb), 0.3)',
                   letterSpacing: '0.1em',
                 }}>
                   [ video demo ]
@@ -144,9 +144,9 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       fontFamily: 'var(--font-mono)',
                       fontSize: '0.65rem',
                       letterSpacing: '0.05em',
-                      color: 'rgba(57,255,20,0.7)',
-                      background: 'rgba(57,255,20,0.08)',
-                      border: '1px solid rgba(57,255,20,0.15)',
+                      color: 'rgba(var(--accent-rgb), 0.7)',
+                      background: 'rgba(var(--accent-rgb), 0.08)',
+                      border: '1px solid rgba(var(--accent-rgb), 0.15)',
                       borderRadius: '2px',
                       padding: '2px 8px',
                     }}
@@ -213,7 +213,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       letterSpacing: '0.05em',
                       color: 'var(--accent)',
                       textDecoration: 'none',
-                      border: '1px solid rgba(57,255,20,0.4)',
+                      border: '1px solid rgba(var(--accent-rgb), 0.4)',
                       borderRadius: '2px',
                       padding: '5px 12px',
                       transition: 'box-shadow 0.2s',

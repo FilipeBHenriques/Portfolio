@@ -13,8 +13,14 @@ const WIN_SCORE = 7;
 const RESET_PAUSE_MS = 800;
 const PADDLE_MARGIN = 20;
 
-const ACCENT = '#39ff14';
 const BG_BASE = '#080808';
+
+function readAccent(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#39ff14'
+}
+function readAccentRgb(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '57, 255, 20'
+}
 const BG_SURFACE = '#111111';
 const TEXT_PRIMARY = '#f0f0f0';
 const TEXT_MUTED = '#666666';
@@ -106,17 +112,20 @@ export function Pong() {
     const ctx = ctxRef.current;
     const g = gameRef.current;
     if (!ctx || !g) return;
+    const bgBase = getComputedStyle(document.documentElement).getPropertyValue('--bg-base').trim() || BG_BASE
+    const textPrimary = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || TEXT_PRIMARY
+    const textMuted = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || TEXT_MUTED
 
     const { width, height, ball, player, ai, state, winner } = g;
 
     // Background
-    ctx.fillStyle = BG_BASE;
+    ctx.fillStyle = bgBase;
     ctx.fillRect(0, 0, width, height);
 
     // Center dashed line
     ctx.save();
     ctx.setLineDash([4, 8]);
-    ctx.strokeStyle = 'rgba(57,255,20,0.1)';
+    ctx.strokeStyle = `rgba(${readAccentRgb()},0.1)`;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(width / 2, 0);
@@ -130,20 +139,20 @@ export function Pong() {
       const scale = 0.4 + (i / TRAIL_LENGTH) * 0.6;
       const size = BALL_SIZE * scale;
       const offset = (BALL_SIZE - size) / 2;
-      ctx.fillStyle = `rgba(57,255,20,${alpha})`;
+      ctx.fillStyle = `rgba(${readAccentRgb()},${alpha})`;
       ctx.fillRect(pos.x + offset, pos.y + offset, size, size);
     });
 
     // Ball
-    ctx.fillStyle = ACCENT;
-    ctx.shadowColor = ACCENT;
+    ctx.fillStyle = readAccent();
+    ctx.shadowColor = readAccent();
     ctx.shadowBlur = 10;
     ctx.fillRect(ball.pos.x, ball.pos.y, BALL_SIZE, BALL_SIZE);
     ctx.shadowBlur = 0;
 
     // Player paddle (left, accent)
-    ctx.fillStyle = ACCENT;
-    ctx.shadowColor = ACCENT;
+    ctx.fillStyle = readAccent();
+    ctx.shadowColor = readAccent();
     ctx.shadowBlur = 8;
     ctx.fillRect(PADDLE_MARGIN, player.y, PADDLE_W, PADDLE_H);
     ctx.shadowBlur = 0;
@@ -154,7 +163,7 @@ export function Pong() {
 
     // Score
     const scoreText = `${String(player.score).padStart(2, '0')} — ${String(ai.score).padStart(2, '0')}`;
-    ctx.fillStyle = TEXT_PRIMARY;
+    ctx.fillStyle = textPrimary;
     ctx.font = `bold 28px ${FONT_MONO}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
@@ -163,16 +172,16 @@ export function Pong() {
     // Overlays
     if (state === 'start') {
       drawOverlay(ctx, width, height, [
-        { text: 'PONG', size: 72, font: FONT_DISPLAY, color: ACCENT, glow: true },
-        { text: 'W/S  vs  AI', size: 16, font: FONT_MONO, color: TEXT_MUTED, glow: false },
-        { text: '[ PRESS SPACE ]', size: 14, font: FONT_MONO, color: ACCENT, glow: false },
+        { text: 'PONG', size: 72, font: FONT_DISPLAY, color: readAccent(), glow: true },
+        { text: 'W/S  vs  AI', size: 16, font: FONT_MONO, color: textMuted, glow: false },
+        { text: '[ PRESS SPACE ]', size: 14, font: FONT_MONO, color: readAccent(), glow: false },
       ]);
     } else if (state === 'won' && winner) {
       const winnerText = winner === 'player' ? 'YOU WIN' : 'AI WINS';
       drawOverlay(ctx, width, height, [
-        { text: winnerText, size: 60, font: FONT_DISPLAY, color: ACCENT, glow: true },
-        { text: `${String(player.score).padStart(2, '0')}  —  ${String(ai.score).padStart(2, '0')}`, size: 24, font: FONT_MONO, color: TEXT_PRIMARY, glow: false },
-        { text: '[ SPACE / CLICK ]', size: 14, font: FONT_MONO, color: ACCENT, glow: false },
+        { text: winnerText, size: 60, font: FONT_DISPLAY, color: readAccent(), glow: true },
+        { text: `${String(player.score).padStart(2, '0')}  —  ${String(ai.score).padStart(2, '0')}`, size: 24, font: FONT_MONO, color: textPrimary, glow: false },
+        { text: '[ SPACE / CLICK ]', size: 14, font: FONT_MONO, color: readAccent(), glow: false },
       ]);
     }
   }, []);
@@ -192,10 +201,10 @@ export function Pong() {
     const boxH = 200;
     const boxX = (width - boxW) / 2;
     const boxY = (height - boxH) / 2;
-    ctx.strokeStyle = BORDER;
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || BORDER;
     ctx.lineWidth = 1;
     ctx.strokeRect(boxX, boxY, boxW, boxH);
-    ctx.fillStyle = BG_SURFACE;
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-surface').trim() || BG_SURFACE;
     ctx.fillRect(boxX, boxY, boxW, boxH);
 
     // Lines
@@ -210,7 +219,7 @@ export function Pong() {
       ctx.font = `${i === 0 ? 'bold ' : ''}${line.size}px ${line.font}`;
       ctx.fillStyle = line.color;
       if (line.glow) {
-        ctx.shadowColor = ACCENT;
+        ctx.shadowColor = readAccent();
         ctx.shadowBlur = 20;
       }
       ctx.fillText(line.text, width / 2, boxY + padding + lineSpacing * (i + 1));
@@ -451,7 +460,7 @@ export function Pong() {
       style={{
         width: '100%',
         height: '100%',
-        background: BG_BASE,
+        background: 'var(--bg-base)',
         position: 'relative',
         overflow: 'hidden',
         cursor: 'default',

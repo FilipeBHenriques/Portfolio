@@ -90,8 +90,8 @@ function CarouselCard({ project, onClick }: { project: Project; onClick: () => v
         style={{
           height: '140px',
           borderRadius: '2px',
-          background: 'linear-gradient(135deg, rgba(57,255,20,0.08) 0%, rgba(57,255,20,0.02) 100%)',
-          border: '1px solid rgba(57,255,20,0.1)',
+          background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.08) 0%, rgba(var(--accent-rgb), 0.02) 100%)',
+          border: '1px solid rgba(var(--accent-rgb), 0.1)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -100,7 +100,7 @@ function CarouselCard({ project, onClick }: { project: Project; onClick: () => v
         <span style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '0.7rem',
-          color: 'rgba(57,255,20,0.3)',
+          color: 'rgba(var(--accent-rgb), 0.3)',
           letterSpacing: '0.1em',
         }}>
           [ preview ]
@@ -126,9 +126,9 @@ function CarouselCard({ project, onClick }: { project: Project; onClick: () => v
               fontFamily: 'var(--font-mono)',
               fontSize: '0.65rem',
               letterSpacing: '0.05em',
-              color: 'rgba(57,255,20,0.7)',
-              background: 'rgba(57,255,20,0.08)',
-              border: '1px solid rgba(57,255,20,0.15)',
+              color: 'rgba(var(--accent-rgb), 0.7)',
+              background: 'rgba(var(--accent-rgb), 0.08)',
+              border: '1px solid rgba(var(--accent-rgb), 0.15)',
               borderRadius: '2px',
               padding: '2px 6px',
             }}

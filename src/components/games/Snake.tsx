@@ -2,12 +2,16 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Design tokens ─────────────────────────────────────────────────────────────
-const ACCENT = '#39ff14';
 const BG_BASE = '#080808';
+
+function readAccent(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#39ff14'
+}
+function readAccentRgb(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '57, 255, 20'
+}
 const BG_SURFACE = '#111111';
-const TEXT_PRIMARY = '#f0f0f0';
 const TEXT_MUTED = '#666666';
-const BORDER = '#222222';
 const FONT_MONO = "'JetBrains Mono', monospace";
 const FONT_DISPLAY = "'Space Grotesk', sans-serif";
 
@@ -151,13 +155,15 @@ function drawFrame(
   hiScore: number,
 ) {
   const { snake, food, score, cols, rows } = state;
+  const bgBase = getComputedStyle(document.documentElement).getPropertyValue('--bg-base').trim() || BG_BASE
+  const textMuted = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || TEXT_MUTED
 
   // Background
-  ctx.fillStyle = BG_BASE;
+  ctx.fillStyle = bgBase;
   ctx.fillRect(0, 0, w, h);
 
   // Faint grid
-  ctx.strokeStyle = 'rgba(57,255,20,0.04)';
+  ctx.strokeStyle = `rgba(${readAccentRgb()},0.04)`;
   ctx.lineWidth = 1;
   for (let x = 0; x <= cols; x++) {
     ctx.beginPath();
@@ -174,9 +180,9 @@ function drawFrame(
 
   // Food — glowing accent square
   ctx.save();
-  ctx.shadowColor = ACCENT;
+  ctx.shadowColor = readAccent();
   ctx.shadowBlur = 12;
-  ctx.fillStyle = ACCENT;
+  ctx.fillStyle = readAccent();
   ctx.fillRect(food.x * CELL + 3, food.y * CELL + 3, CELL - 6, CELL - 6);
   ctx.restore();
 
@@ -184,7 +190,7 @@ function drawFrame(
   for (let i = snake.length - 1; i >= 1; i--) {
     const p = snake[i];
     const alpha = Math.max(0.3, 0.9 - i * 0.012);
-    ctx.fillStyle = `rgba(57,255,20,${alpha.toFixed(3)})`;
+    ctx.fillStyle = `rgba(${readAccentRgb()},${alpha.toFixed(3)})`;
     ctx.fillRect(p.x * CELL + 1, p.y * CELL + 1, CELL - 2, CELL - 2);
   }
 
@@ -192,7 +198,7 @@ function drawFrame(
   if (snake.length > 0) {
     const h0 = snake[0];
     ctx.save();
-    ctx.shadowColor = ACCENT;
+    ctx.shadowColor = readAccent();
     ctx.shadowBlur = 10;
     ctx.fillStyle = '#d4ffce';
     ctx.fillRect(h0.x * CELL + 1, h0.y * CELL + 1, CELL - 2, CELL - 2);
@@ -201,7 +207,7 @@ function drawFrame(
 
   // HUD — score top-left
   ctx.font = `13px ${FONT_MONO}`;
-  ctx.fillStyle = TEXT_MUTED;
+  ctx.fillStyle = textMuted;
   ctx.fillText(`SCORE: ${pad3(score)}`, 12, 22);
   ctx.fillText(`BEST:  ${pad3(hiScore)}`, 12, 40);
 }
@@ -240,12 +246,12 @@ function Overlay({ phase, score, hiScore, onRestart }: OverlayProps) {
           <div
             style={{
               background: BG_SURFACE,
-              border: `1px solid ${BORDER}`,
+              border: '1px solid var(--border)',
               borderRadius: 4,
               padding: '32px 52px',
               textAlign: 'center',
               minWidth: 280,
-              boxShadow: `0 0 48px rgba(57,255,20,0.07)`,
+              boxShadow: '0 0 48px rgba(var(--accent-rgb), 0.07)',
             }}
           >
             {phase === 'start' && (
@@ -255,10 +261,10 @@ function Overlay({ phase, score, hiScore, onRestart }: OverlayProps) {
                     fontFamily: FONT_DISPLAY,
                     fontSize: 30,
                     fontWeight: 700,
-                    color: ACCENT,
+                    color: 'var(--accent)',
                     letterSpacing: '0.05em',
                     marginBottom: 10,
-                    textShadow: `0 0 20px ${ACCENT}66`,
+                    textShadow: '0 0 20px rgba(var(--accent-rgb), 0.4)',
                   }}
                 >
                   SNAKE
@@ -267,7 +273,7 @@ function Overlay({ phase, score, hiScore, onRestart }: OverlayProps) {
                   style={{
                     fontFamily: FONT_MONO,
                     fontSize: 11,
-                    color: TEXT_MUTED,
+                    color: 'var(--text-muted)',
                     letterSpacing: '0.10em',
                     marginBottom: 32,
                   }}
@@ -278,9 +284,9 @@ function Overlay({ phase, score, hiScore, onRestart }: OverlayProps) {
                   style={{
                     fontFamily: FONT_MONO,
                     fontSize: 12,
-                    color: TEXT_PRIMARY,
+                    color: 'var(--text-primary)',
                     letterSpacing: '0.08em',
-                    border: `1px solid ${BORDER}`,
+                    border: '1px solid var(--border)',
                     padding: '8px 20px',
                     display: 'inline-block',
                   }}
@@ -297,7 +303,7 @@ function Overlay({ phase, score, hiScore, onRestart }: OverlayProps) {
                     fontFamily: FONT_DISPLAY,
                     fontSize: 22,
                     fontWeight: 700,
-                    color: TEXT_PRIMARY,
+                    color: 'var(--text-primary)',
                     letterSpacing: '0.06em',
                     marginBottom: 28,
                   }}
@@ -308,33 +314,33 @@ function Overlay({ phase, score, hiScore, onRestart }: OverlayProps) {
                   style={{
                     fontFamily: FONT_MONO,
                     fontSize: 13,
-                    color: TEXT_MUTED,
+                    color: 'var(--text-muted)',
                     letterSpacing: '0.08em',
                     marginBottom: 8,
                   }}
                 >
                   SCORE&nbsp;&nbsp;&nbsp;
-                  <span style={{ color: ACCENT, fontWeight: 600 }}>{pad3(score)}</span>
+                  <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{pad3(score)}</span>
                 </div>
                 <div
                   style={{
                     fontFamily: FONT_MONO,
                     fontSize: 13,
-                    color: TEXT_MUTED,
+                    color: 'var(--text-muted)',
                     letterSpacing: '0.08em',
                     marginBottom: 32,
                   }}
                 >
                   BEST&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span style={{ color: TEXT_PRIMARY }}>{pad3(hiScore)}</span>
+                  <span style={{ color: 'var(--text-primary)' }}>{pad3(hiScore)}</span>
                 </div>
                 <div
                   style={{
                     fontFamily: FONT_MONO,
                     fontSize: 12,
-                    color: TEXT_PRIMARY,
+                    color: 'var(--text-primary)',
                     letterSpacing: '0.06em',
-                    border: `1px solid ${BORDER}`,
+                    border: '1px solid var(--border)',
                     padding: '8px 20px',
                     display: 'inline-block',
                     cursor: 'pointer',
@@ -538,7 +544,7 @@ export function Snake() {
         position: 'relative',
         width: '100%',
         height: '100%',
-        background: BG_BASE,
+        background: 'var(--bg-base)',
         overflow: 'hidden',
       }}
     >

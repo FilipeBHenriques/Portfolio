@@ -11,6 +11,8 @@
   --text-muted:   #666666;
   --border:       #222222;
 
+  --accent-rgb: 57, 255, 20;
+
   --glow-sm:  0 0 8px #39ff14aa;
   --glow-md:  0 0 20px #39ff1466, 0 0 40px #39ff1422;
   --glow-lg:  0 0 40px #39ff1488, 0 0 80px #39ff1433;
@@ -83,8 +85,8 @@ body {
 /* Perspective grid background */
 .perspective-grid {
   background-image:
-    linear-gradient(rgba(57, 255, 20, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57, 255, 20, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(var(--accent-rgb), 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.04) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -114,4 +116,32 @@ body {
     black 95%,
     transparent 100%
   );
+}
+
+/* Hero two-column grid */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 1100px;
+  width: 100%;
+  padding: 0 2rem;
+}
+
+@media (max-width: 767px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* CRT flicker effect for RetroShell */
+@keyframes crt-flicker {
+  0%   { opacity: 1; }
+  92%  { opacity: 1; }
+  93%  { opacity: 0.97; }
+  94%  { opacity: 1; }
+  96%  { opacity: 0.98; }
+  100% { opacity: 1; }
 }

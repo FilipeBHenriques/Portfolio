@@ -43,7 +43,7 @@ export function ProjectCard({ project }: { project: Project }) {
       {/* Media placeholder */}
       <div style={{
         height: '180px',
-        background: 'linear-gradient(135deg, rgba(57,255,20,0.07) 0%, rgba(57,255,20,0.02) 50%, rgba(8,8,8,0.5) 100%)',
+        background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.07) 0%, rgba(var(--accent-rgb), 0.02) 50%, rgba(8,8,8,0.5) 100%)',
         borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
@@ -61,7 +61,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <span style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '0.65rem',
-          color: 'rgba(57,255,20,0.25)',
+          color: 'rgba(var(--accent-rgb), 0.25)',
           letterSpacing: '0.1em',
           position: 'relative',
           zIndex: 1,
@@ -91,9 +91,9 @@ export function ProjectCard({ project }: { project: Project }) {
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.6rem',
                 letterSpacing: '0.06em',
-                color: 'rgba(57,255,20,0.65)',
-                background: 'rgba(57,255,20,0.07)',
-                border: '1px solid rgba(57,255,20,0.12)',
+                color: 'rgba(var(--accent-rgb), 0.65)',
+                background: 'rgba(var(--accent-rgb), 0.07)',
+                border: '1px solid rgba(var(--accent-rgb), 0.12)',
                 borderRadius: '2px',
                 padding: '1px 6px',
               }}
@@ -194,7 +194,7 @@ function ActionButtons({ project }: { project: Project }) {
             width: '28px',
             height: '28px',
             background: 'rgba(8,8,8,0.85)',
-            border: '1px solid rgba(57,255,20,0.3)',
+            border: '1px solid rgba(var(--accent-rgb), 0.3)',
             borderRadius: '2px',
             color: 'var(--accent)',
             transition: 'box-shadow 0.15s',

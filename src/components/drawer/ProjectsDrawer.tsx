@@ -84,7 +84,7 @@ export function ProjectsDrawer({ isOpen, onClose, onToggle }: ProjectsDrawerProp
                     letterSpacing: '0.08em',
                     color: 'var(--accent)',
                     textDecoration: 'none',
-                    border: '1px solid rgba(57,255,20,0.3)',
+                    border: '1px solid rgba(var(--accent-rgb), 0.3)',
                     borderRadius: '2px',
                     padding: '3px 10px',
                     transition: 'box-shadow 0.2s',
