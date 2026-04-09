@@ -28,7 +28,7 @@ export function DrawerHandle({ isOpen, onClick }: DrawerHandleProps) {
         transition: 'background 0.2s',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(57,255,20,0.05)'
+        e.currentTarget.style.background = 'rgba(var(--accent-rgb), 0.05)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.background = 'rgba(8,8,8,0.95)'

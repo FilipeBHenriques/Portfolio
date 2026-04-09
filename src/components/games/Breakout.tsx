@@ -10,7 +10,21 @@ interface Paddle {
 }
 interface Brick {
   x: number; y: number; width: number; height: number;
-  alive: boolean; color: string; points: number; flash: boolean;
+  alive: boolean; row: number; points: number; flash: boolean;
+}
+
+function readAccent(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#39ff14'
+}
+function readAccentRgb(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim() || '57, 255, 20'
+}
+function rowColors(rgb: string): string[] {
+  return [
+    `rgba(${rgb},0.95)`, `rgba(${rgb},0.80)`,
+    `rgba(${rgb},0.65)`, `rgba(${rgb},0.50)`,
+    `rgba(${rgb},0.35)`, `rgba(${rgb},0.20)`,
+  ]
 }
 interface TrailPoint { x: number; y: number; }
 
@@ -47,16 +61,11 @@ const SLOW_DURATION       = 7000;
 const FAST_DURATION       = 5000;
 const HI_SCORE_KEY        = 'breakout_hi';
 
-const ROW_COLORS  = [
-  'rgba(57,255,20,0.95)', 'rgba(57,255,20,0.80)',
-  'rgba(57,255,20,0.65)', 'rgba(57,255,20,0.50)',
-  'rgba(57,255,20,0.35)', 'rgba(57,255,20,0.20)',
-];
 const ROW_POINTS  = [5, 4, 3, 2, 1, 1];
 
 const POWERUP_META: Record<PowerupType, { label: string; color: string; glow: string }> = {
   WIDE:  { label: '+W',  color: '#39ff14', glow: '#39ff14' },
-  SLOW:  { label: '+S',  color: '#00e5ff', glow: '#00e5ff' },
+  SLOW:  { label: '+S',  color: '#9feeff', glow: '#9feeff' },
   LIFE:  { label: '+1',  color: '#ff4da6', glow: '#ff4da6' },
   FAST:  { label: '!!',  color: '#ff6600', glow: '#ff6600' },
   MULTI: { label: '+M',  color: '#c8ffb4', glow: '#c8ffb4' },
@@ -75,7 +84,7 @@ function buildBricks(canvasWidth: number): Brick[] {
       width: brickWidth,
       height: BRICK_HEIGHT,
       alive: true,
-      color: ROW_COLORS[row],
+      row,
       points: ROW_POINTS[row],
       flash: false,
     };
@@ -241,7 +250,7 @@ export function Breakout() {
     const { width, height } = sizeRef.current;
     const phase = phaseRef.current;
 
-    ctx.fillStyle = '#080808';
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-base').trim() || '#080808';
     ctx.fillRect(0, 0, width, height);
 
     if (phase === 'start') {
@@ -256,7 +265,7 @@ export function Breakout() {
       const trail = trails[bi];
       for (let i = 0; i < trail.length; i++) {
         const a = ((i + 1) / (trail.length + 1)) * 0.35;
-        ctx.fillStyle = `rgba(57,255,20,${a.toFixed(2)})`;
+        ctx.fillStyle = `rgba(${readAccentRgb()},${a.toFixed(2)})`;
         const t = trail[i];
         ctx.fillRect(t.x, t.y, BALL_SIZE, BALL_SIZE);
       }
@@ -270,9 +279,9 @@ export function Breakout() {
         ctx.fillRect(b.x - 1, b.y - 1, b.width + 2, b.height + 2);
         b.flash = false;
       } else {
-        ctx.fillStyle = b.color;
+        ctx.fillStyle = rowColors(readAccentRgb())[b.row];
         ctx.fillRect(b.x, b.y, b.width, b.height);
-        ctx.strokeStyle = 'rgba(57,255,20,0.3)';
+        ctx.strokeStyle = `rgba(${readAccentRgb()},0.3)`;
         ctx.lineWidth   = 1;
         ctx.strokeRect(b.x + .5, b.y + .5, b.width - 1, b.height - 1);
       }
@@ -282,13 +291,14 @@ export function Breakout() {
     for (const pu of powerupsRef.current) {
       if (pu.collected) continue;
       const meta = POWERUP_META[pu.type];
+      const puColor = pu.type === 'WIDE' ? readAccent() : meta.color;
       ctx.save();
-      ctx.shadowColor = meta.glow;
+      ctx.shadowColor = puColor;
       ctx.shadowBlur  = 8;
-      ctx.fillStyle   = meta.color;
+      ctx.fillStyle   = puColor;
       ctx.fillRect(pu.x, pu.y, POWERUP_W, POWERUP_H);
       ctx.shadowBlur  = 0;
-      ctx.fillStyle   = '#080808';
+      ctx.fillStyle   = getComputedStyle(document.documentElement).getPropertyValue('--bg-base').trim() || '#080808';
       ctx.font        = "bold 9px 'JetBrains Mono', monospace";
       ctx.textAlign   = 'center';
       ctx.textBaseline = 'middle';
@@ -300,7 +310,7 @@ export function Breakout() {
     // Paddle
     const paddle = paddleRef.current;
     const fx     = fxRef.current;
-    const paddleColor = fx.wide ? '#00e5ff' : '#39ff14';
+    const paddleColor = fx.wide ? `rgba(${readAccentRgb()},0.75)` : readAccent();
     ctx.fillStyle   = paddleColor;
     ctx.shadowColor = paddleColor;
     ctx.shadowBlur  = 8;
@@ -309,7 +319,7 @@ export function Breakout() {
 
     // Balls
     const balls = ballsRef.current;
-    const ballColor = fx.slow ? '#00e5ff' : fx.fast ? '#ff6600' : '#39ff14';
+    const ballColor = fx.slow ? `rgba(${readAccentRgb()},0.75)` : fx.fast ? '#ff6600' : readAccent();
     for (const ball of balls) {
       ctx.fillStyle   = ballColor;
       ctx.shadowColor = ballColor;
@@ -321,27 +331,27 @@ export function Breakout() {
     // HUD
     ctx.font      = "13px 'JetBrains Mono', monospace";
     ctx.textAlign = 'left';
-    ctx.fillStyle = '#39ff14';
+    ctx.fillStyle = readAccent();
     const liveStr = Array.from({ length: 5 }, (_, i) =>
       i < livesRef.current ? '■' : '□'
     ).slice(0, Math.max(livesRef.current, 3)).join(' ');
     ctx.fillText(`LIVES: ${liveStr}`, 12, 24);
 
     ctx.textAlign = 'right';
-    ctx.fillStyle = '#f0f0f0';
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#f0f0f0';
     ctx.fillText(`SCORE  ${scoreRef.current}`, width - 12, 24);
-    ctx.fillStyle = '#666666';
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#666666';
     ctx.fillText(`BEST   ${hiScoreRef.current}`, width - 12, 42);
 
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#666666';
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#666666';
     ctx.fillText(`LVL ${levelRef.current}`, width / 2, 24);
 
     // Active effect indicators
     const now    = Date.now();
     const pills: { label: string; color: string; rem: number }[] = [];
-    if (fx.wide) pills.push({ label: '+WIDE', color: '#39ff14', rem: fx.wide - now });
-    if (fx.slow) pills.push({ label: '+SLOW', color: '#00e5ff', rem: fx.slow - now });
+    if (fx.wide) pills.push({ label: '+WIDE', color: readAccent(), rem: fx.wide - now });
+    if (fx.slow) pills.push({ label: '+SLOW', color: `rgba(${readAccentRgb()},0.75)`, rem: fx.slow - now });
     if (fx.fast) pills.push({ label: '!FAST', color: '#ff6600', rem: fx.fast - now });
 
     if (pills.length > 0) {
@@ -619,7 +629,7 @@ export function Breakout() {
   return (
     <div
       ref={containerRef}
-      style={{ width: '100%', height: '100%', background: '#080808',
+      style={{ width: '100%', height: '100%', background: 'var(--bg-base)',
                overflow: 'hidden', userSelect: 'none', cursor: 'none' }}
     >
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
@@ -641,10 +651,10 @@ function drawOverlay(
   ctx.fillRect(0, 0, w, h);
 
   ctx.textAlign  = 'center';
-  ctx.shadowColor = '#39ff14';
+  ctx.shadowColor = readAccent();
   ctx.shadowBlur  = 20;
   ctx.font        = "bold 48px 'JetBrains Mono', monospace";
-  ctx.fillStyle   = '#39ff14';
+  ctx.fillStyle   = readAccent();
   ctx.fillText(title, w / 2, h / 2 - 60);
   ctx.shadowBlur  = 0;
 
@@ -652,7 +662,11 @@ function drawOverlay(
     if (!line) return;
     const isLast = i === lines.length - 1;
     ctx.font      = `${isLast ? 14 : 16}px 'JetBrains Mono', monospace`;
-    ctx.fillStyle = isLast ? '#f0f0f0' : i === 1 ? '#39ff14' : '#666666';
+    ctx.fillStyle = isLast
+      ? getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#f0f0f0'
+      : i === 1
+        ? readAccent()
+        : getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#666666';
     ctx.fillText(line, w / 2, h / 2 - 10 + i * 30);
   });
   ctx.restore();

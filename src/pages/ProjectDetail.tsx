@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { motion, type Variants } from 'framer-motion'
 import { Code2, ExternalLink, ArrowLeft } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
@@ -28,6 +28,7 @@ function useWindowWidth() {
 }
 
 export function ProjectDetail() {
+  const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const project = projects.find((p) => p.id === id)
   const isMobile = useWindowWidth() <= 900
@@ -66,7 +67,7 @@ export function ProjectDetail() {
               color: 'var(--accent)',
               textDecoration: 'none',
               letterSpacing: '0.06em',
-              borderBottom: '1px solid rgba(57,255,20,0.3)',
+              borderBottom: '1px solid rgba(var(--accent-rgb), 0.3)',
               paddingBottom: '1px',
             }}
           >
@@ -178,9 +179,9 @@ export function ProjectDetail() {
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.65rem',
                     letterSpacing: '0.08em',
-                    color: 'rgba(57,255,20,0.75)',
-                    background: 'rgba(57,255,20,0.07)',
-                    border: '1px solid rgba(57,255,20,0.15)',
+                    color: 'rgba(var(--accent-rgb), 0.75)',
+                    background: 'rgba(var(--accent-rgb), 0.07)',
+                    border: '1px solid rgba(var(--accent-rgb), 0.15)',
                     borderRadius: '2px',
                     padding: '3px 8px',
                   }}
@@ -313,7 +314,7 @@ export function ProjectDetail() {
                       letterSpacing: '0.06em',
                       color: 'var(--accent)',
                       background: 'transparent',
-                      border: '1px solid rgba(57,255,20,0.45)',
+                      border: '1px solid rgba(var(--accent-rgb), 0.45)',
                       borderRadius: '3px',
                       padding: '9px 18px',
                       textDecoration: 'none',
@@ -326,7 +327,7 @@ export function ProjectDetail() {
                     onMouseLeave={(e) => {
                       e.currentTarget.style.boxShadow = 'none'
                       e.currentTarget.style.borderColor =
-                        'rgba(57,255,20,0.45)'
+                        'rgba(var(--accent-rgb), 0.45)'
                     }}
                   >
                     <ExternalLink size={14} />
@@ -338,26 +339,30 @@ export function ProjectDetail() {
 
             {/* Bottom cd link */}
             <motion.div variants={fadeUp} style={{ marginTop: 'auto' }}>
-              <Link
-                to="/projects"
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.72rem',
                   color: 'var(--text-muted)',
-                  textDecoration: 'none',
+                  background: 'transparent',
+                  border: 'none',
                   letterSpacing: '0.06em',
                   opacity: 0.6,
                   transition: 'opacity 0.15s',
+                  padding: 0,
+                  cursor: 'pointer',
                 }}
                 onMouseEnter={(e) =>
-                  ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')
+                  ((e.currentTarget as HTMLButtonElement).style.opacity = '1')
                 }
                 onMouseLeave={(e) =>
-                  ((e.currentTarget as HTMLAnchorElement).style.opacity = '0.6')
+                  ((e.currentTarget as HTMLButtonElement).style.opacity = '0.6')
                 }
               >
                 {'>'} cd ..
-              </Link>
+              </button>
             </motion.div>
           </motion.div>
 
@@ -548,18 +553,18 @@ function PreviewPanel({ project }: { project: Project }) {
                   width: '34px',
                   height: '34px',
                   background: 'var(--bg-elevated)',
-                  border: '1px solid rgba(57,255,20,0.25)',
+                  border: '1px solid rgba(var(--accent-rgb), 0.25)',
                   borderRadius: '3px',
                   color: 'var(--accent)',
                   transition: 'box-shadow 0.15s, border-color 0.15s',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = 'var(--glow-sm)'
-                  e.currentTarget.style.borderColor = 'rgba(57,255,20,0.6)'
+                  e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.6)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = 'none'
-                  e.currentTarget.style.borderColor = 'rgba(57,255,20,0.25)'
+                  e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.25)'
                 }}
               >
                 <ExternalLink size={15} />
@@ -587,7 +592,7 @@ function PreviewPanel({ project }: { project: Project }) {
           style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '0.6rem',
-            color: 'rgba(57,255,20,0.3)',
+            color: 'rgba(var(--accent-rgb), 0.3)',
             letterSpacing: '0.08em',
           }}
         >
