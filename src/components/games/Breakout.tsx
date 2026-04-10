@@ -393,12 +393,12 @@ export function Breakout() {
 
     expireEffects();
 
-    // Paddle movement (keyboard)
-    if (keysRef.current.left)  paddle.x = Math.max(0, paddle.x - ARROW_SPEED);
-    if (keysRef.current.right) paddle.x = Math.min(width - paddle.width, paddle.x + ARROW_SPEED);
-
-    // Paddle movement (mouse overrides keyboard)
-    if (mousePosRef.current !== null) {
+    // Keyboard has priority; mouse is fallback only when no key is held
+    const usingKeyboard = keysRef.current.left || keysRef.current.right;
+    if (usingKeyboard) {
+      if (keysRef.current.left)  paddle.x = Math.max(0, paddle.x - ARROW_SPEED);
+      if (keysRef.current.right) paddle.x = Math.min(width - paddle.width, paddle.x + ARROW_SPEED);
+    } else if (mousePosRef.current !== null) {
       paddle.x = Math.max(0, Math.min(width - paddle.width, mousePosRef.current - paddle.width / 2));
     }
 
@@ -586,8 +586,8 @@ export function Breakout() {
     ro.observe(container);
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft'  || e.key === 'a' || e.key === 'A') keysRef.current.left  = true;
-      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keysRef.current.right = true;
+      if (e.key === 'ArrowLeft'  || e.key === 'a' || e.key === 'A') { e.preventDefault(); keysRef.current.left  = true; }
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { e.preventDefault(); keysRef.current.right = true; }
       if (e.key === ' ') {
         e.preventDefault();
         if (phaseRef.current === 'start' || phaseRef.current === 'dead') startGame();

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { TerminalSquare } from "lucide-react";
+import { Terminal } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { RetroShell } from "./RetroShell";
 
@@ -73,7 +73,7 @@ export function ShellPortal() {
         position: "fixed",
         left: `${heroRect.right - 560}px`,
         top: `${heroRect.top + 72}px`,
-        zIndex: 60,
+        zIndex: 90,
         pointerEvents: "auto",
       };
     }
@@ -82,18 +82,19 @@ export function ShellPortal() {
       position: "fixed",
       right: "20px",
       bottom: "20px",
-      zIndex: 60,
+      zIndex: 90,
       pointerEvents: "auto",
     };
   }, [heroRect, shouldAutoOpen]);
 
   const launcherAnchorStyle = useMemo<React.CSSProperties>(() => {
     if (location.pathname === "/" && heroRect) {
+      // Align with the bottom-right corner bracket in HeroBackground (right: 40px, bottom: 80px)
       return {
         position: "fixed",
-        left: `${heroRect.right - 110}px`,
-        top: `${heroRect.bottom - 150}px`,
-        zIndex: 60,
+        right: `${window.innerWidth - heroRect.right + 60}px`,
+        top: `${heroRect.bottom - 90 - 36 - 8}px`,
+        zIndex: 90,
         pointerEvents: "auto",
       };
     }
@@ -102,7 +103,7 @@ export function ShellPortal() {
       position: "fixed",
       right: "20px",
       bottom: "20px",
-      zIndex: 60,
+      zIndex: 90,
       pointerEvents: "auto",
     };
   }, [heroRect, location.pathname]);
@@ -136,22 +137,28 @@ export function ShellPortal() {
             onClick={() => setIsOpen(true)}
             style={{
               ...launcherAnchorStyle,
-              width: "46px",
-              height: "46px",
-              borderRadius: "14px",
-              border: "1px solid rgba(var(--accent-rgb), 0.16)",
-              background:
-                "linear-gradient(180deg, rgba(var(--accent-rgb), 0.1), rgba(8,8,8,0.98))",
+              height: "36px",
+              paddingInline: "14px",
+              borderRadius: "6px",
+              border: "1px solid rgba(var(--accent-rgb), 0.35)",
+              background: "rgba(8,8,8,0.92)",
               boxShadow:
-                "0 0 18px rgba(0,0,0,0.4), 0 0 10px rgba(var(--accent-rgb), 0.08)",
-              display: "grid",
-              placeItems: "center",
+                "0 0 0 1px rgba(var(--accent-rgb), 0.06), 0 0 16px rgba(var(--accent-rgb), 0.14)",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
               color: "var(--accent)",
               cursor: "pointer",
+              fontFamily: "var(--font-mono)",
+              fontSize: "12px",
+              letterSpacing: "0.04em",
+              whiteSpace: "nowrap",
             }}
             aria-label="Open terminal"
           >
-            <TerminalSquare size={18} />
+            <Terminal size={14} strokeWidth={1.75} />
+            <span style={{ color: "var(--text-muted)" }}>~/</span>
+            <span>terminal</span>
           </motion.button>
         )}
       </AnimatePresence>

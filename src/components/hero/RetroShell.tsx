@@ -781,20 +781,25 @@ export function RetroShell({ onClose }: { onClose?: () => void }) {
             <div
               style={{
                 position: "absolute",
-                left: "12px",
-                right: "12px",
-                bottom: "100%",
-                marginBottom: "8px",
-                background: "rgba(8,8,8,0.96)",
-                border: "1px solid rgba(var(--accent-rgb), 0.24)",
-                borderRadius: "4px",
-                boxShadow: "var(--glow-sm)",
+                left: 0,
+                right: 0,
+                bottom: "calc(100% + 6px)",
+                background: "#0d0d0d",
+                border: "1px solid rgba(var(--accent-rgb), 0.2)",
+                borderRadius: "6px",
+                boxShadow: "0 -4px 24px rgba(0,0,0,0.6), var(--glow-sm)",
                 overflow: "hidden",
                 zIndex: 20,
               }}
             >
               {options.slice(0, 6).map((option, index) => {
                 const active = index === activeOptionIndex;
+                const kindColor =
+                  option.kind === "color"
+                    ? "#bf5fff"
+                    : option.kind === "project"
+                      ? "#00c8ff"
+                      : "var(--accent)";
                 return (
                   <button
                     key={option.value}
@@ -806,33 +811,72 @@ export function RetroShell({ onClose }: { onClose?: () => void }) {
                     style={{
                       display: "flex",
                       width: "100%",
-                      justifyContent: "space-between",
-                      gap: "1rem",
+                      alignItems: "center",
+                      gap: "10px",
                       background: active
-                        ? "rgba(var(--accent-rgb), 0.12)"
+                        ? "rgba(var(--accent-rgb), 0.08)"
                         : "transparent",
                       border: "none",
+                      borderLeft: active
+                        ? "2px solid var(--accent)"
+                        : "2px solid transparent",
                       borderBottom:
                         index === Math.min(options.length, 6) - 1
                           ? "none"
-                          : "1px solid rgba(var(--accent-rgb), 0.08)",
-                      color: active
-                        ? "var(--text-primary)"
-                        : "var(--text-muted)",
-                      padding: "0.5rem 0.75rem",
+                          : "1px solid rgba(255,255,255,0.04)",
+                      color: active ? "var(--text-primary)" : "var(--text-muted)",
+                      padding: "6px 10px",
                       fontFamily: "var(--font-mono)",
                       fontSize: "11px",
                       textAlign: "left",
                       cursor: "pointer",
+                      transition: "background 0.1s",
                     }}
                   >
-                    <span>{option.label}</span>
-                    <span style={{ color: "var(--accent)" }}>
+                    <span style={{ flex: 1, letterSpacing: "0.02em" }}>
+                      {option.label}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "9px",
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: kindColor,
+                        opacity: 0.75,
+                        background: `${kindColor}14`,
+                        border: `1px solid ${kindColor}30`,
+                        borderRadius: "3px",
+                        padding: "1px 5px",
+                        flexShrink: 0,
+                      }}
+                    >
                       {option.kind}
                     </span>
                   </button>
                 );
               })}
+              <div
+                style={{
+                  padding: "4px 10px",
+                  borderTop: "1px solid rgba(255,255,255,0.04)",
+                  display: "flex",
+                  gap: "12px",
+                  background: "rgba(0,0,0,0.3)",
+                }}
+              >
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "#444", letterSpacing: "0.05em" }}>
+                  <kbd style={{ background: "#1a1a1a", border: "1px solid #333", borderRadius: "2px", padding: "0 3px", marginRight: "4px" }}>↑↓</kbd>
+                  navigate
+                </span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "#444", letterSpacing: "0.05em" }}>
+                  <kbd style={{ background: "#1a1a1a", border: "1px solid #333", borderRadius: "2px", padding: "0 3px", marginRight: "4px" }}>Tab</kbd>
+                  complete
+                </span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "#444", letterSpacing: "0.05em" }}>
+                  <kbd style={{ background: "#1a1a1a", border: "1px solid #333", borderRadius: "2px", padding: "0 3px", marginRight: "4px" }}>↵</kbd>
+                  run
+                </span>
+              </div>
             </div>
           )}
         </div>

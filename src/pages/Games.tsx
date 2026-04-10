@@ -4,11 +4,12 @@ import { PageWrapper } from '@/components/layout/PageWrapper'
 import { Snake } from '@/components/games/Snake'
 import { Pong } from '@/components/games/Pong'
 import { Breakout } from '@/components/games/Breakout'
+import { Minesweeper } from '@/components/games/Minesweeper'
 import { fadeUp, stagger } from '@/lib/motionVariants'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type GameId = 'snake' | 'pong' | 'breakout'
+type GameId = 'snake' | 'pong' | 'breakout' | 'minesweeper'
 
 interface GameDef {
   id: GameId
@@ -41,6 +42,13 @@ const GAMES: GameDef[] = [
     title: 'Breakout',
     descriptor: 'Mouse · ← → · Levels',
     component: Breakout,
+  },
+  {
+    id: 'minesweeper',
+    index: '04',
+    title: 'Minesweeper',
+    descriptor: 'Click · Right-click · Chord',
+    component: Minesweeper,
   },
 ]
 
