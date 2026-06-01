@@ -2,10 +2,14 @@ export interface Project {
   id: string
   title: string
   description: string
+  longDescription?: string
   tags: string[]
   githubUrl?: string
   liveUrl?: string
+  embedUrl?: string
   videoUrl?: string
+  images?: string[]
+  privacyPolicyUrl?: string
   featured: boolean
 }
 
@@ -13,61 +17,31 @@ export const projects: Project[] = [
   {
     id: 'quit',
     title: 'QUIT — App Blocker',
-    description: 'Android app that helps you quit gambling by blocking distracting apps with a twist: you gamble for your own screen time. Built with Flutter and Kotlin, it features daily time limits, a real-time monitoring service, bonus rounds, and a social layer where friends can gift each other time. Published on the Play Store.',
-    tags: ['Flutter', 'Android', 'Kotlin', 'Supabase'],
+    description: 'Android app that helps you break phone addiction by making you gamble for your own screen time. Block distracting apps, set daily limits — then bet your remaining time on BlackJack, Mines, or Roulette to earn more. Published on the Play Store.',
+    longDescription: 'QUIT flips the script on screen-time apps: instead of just locking you out, it turns your remaining daily allowance into chips. Want more time? Win it back at the table. Lose, and the apps stay blocked. Built with Flutter and Kotlin, it uses Android\'s AccessibilityService and overlay APIs to enforce blocks in real time. A Supabase backend handles cloud sync, friend gifting (send someone extra time), and persistent stats. Three mini-games — BlackJack, Mines, and Roulette — are built from scratch with proper RNG and bet management. The monitoring foreground service survives app kills and device restarts.',
+    tags: ['Flutter', 'Kotlin', 'Android', 'Supabase'],
     githubUrl: 'https://github.com/FilipeBHenriques/QUIT',
+    images: [
+      '/Portfolio/projects/quit/feature-graphic.png',
+      '/Portfolio/projects/quit/Main.png',
+      '/Portfolio/projects/quit/Stats.png',
+      '/Portfolio/projects/quit/BlackJack.png',
+      '/Portfolio/projects/quit/Mines.png',
+      '/Portfolio/projects/quit/Roullete.png',
+    ],
+    privacyPolicyUrl: '/Portfolio/privacy-quit.html',
     featured: true,
   },
   {
-    id: 'devshell',
-    title: 'DevShell',
-    description: 'A terminal multiplexer written in Go with a custom session manager, plugin system, and scriptable keybindings. Handles nested sessions, persistent history, and workspace state restoration on boot.',
-    tags: ['Go', 'CLI', 'Systems'],
-    githubUrl: 'https://github.com',
+    id: 'algo-visualizer',
+    title: 'Algorithm Visualizer',
+    description: '3D maze generation and pathfinding visualizer built with React Three Fiber. Watch algorithms carve through a voxel grid in real time — switch between 2D and 3D views, tweak speed, and explore multiple generation strategies.',
+    longDescription: 'A real-time algorithm visualizer that renders maze generation and pathfinding in a fully interactive 3D scene. Built on React Three Fiber with instanced rendering for performance, it supports multiple generation algorithms (recursive backtracker, Prim\'s, Kruskal\'s) and solvers (BFS, DFS, A*). A sci-fi aesthetic with custom shaders, a settings drawer, and smooth camera controls keeps it engaging beyond the algorithm itself. Toggle between a top-down 2D schematic and a first-person 3D walkthrough of the generated maze.',
+    tags: ['TypeScript', 'React', 'Three.js', 'React Three Fiber'],
+    githubUrl: 'https://github.com/FilipeBHenriques/AlgoVizualizer',
+    liveUrl: 'https://filipeyelhow.github.io/AlgoVizualizer/',
+    embedUrl: 'https://filipeyelhow.github.io/AlgoVizualizer/',
     featured: true,
-  },
-  {
-    id: 'synthwave-engine',
-    title: 'SynthWave Engine',
-    description: 'Browser-based synthesizer built with the Web Audio API and React. Supports polyphonic input, envelope shaping, LFO modulation, and a step sequencer. No dependencies beyond the browser.',
-    tags: ['TypeScript', 'React', 'Web Audio'],
-    githubUrl: 'https://github.com',
-    liveUrl: 'https://example.com',
-    featured: true,
-  },
-  {
-    id: 'glitch-ui',
-    title: 'Glitch UI',
-    description: 'Component library with an intentional glitch aesthetic — scanlines, chromatic aberration effects, corrupt-text transitions. Built for React with zero runtime CSS-in-JS.',
-    tags: ['TypeScript', 'React', 'CSS'],
-    githubUrl: 'https://github.com',
-    liveUrl: 'https://example.com',
-    featured: false,
-  },
-  {
-    id: 'voxel-world',
-    title: 'Voxel World',
-    description: 'Procedurally generated voxel terrain renderer using Three.js and custom chunk-based world management. Features cave systems, biomes, and real-time ambient occlusion.',
-    tags: ['TypeScript', 'Three.js', 'Game Dev'],
-    githubUrl: 'https://github.com',
-    featured: false,
-  },
-  {
-    id: 'flux-api',
-    title: 'Flux API',
-    description: 'Lightweight REST framework for Go with zero-allocation routing, middleware chaining, and automatic OpenAPI spec generation from struct tags. Sub-millisecond p99 latency.',
-    tags: ['Go', 'API', 'Performance'],
-    githubUrl: 'https://github.com',
-    featured: false,
-  },
-  {
-    id: 'neural-pixels',
-    title: 'Neural Pixels',
-    description: 'Real-time style transfer running in the browser via TensorFlow.js. Converts webcam feed or uploaded images with custom-trained artistic models, 12fps on modern hardware.',
-    tags: ['Python', 'ML', 'TypeScript'],
-    githubUrl: 'https://github.com',
-    liveUrl: 'https://example.com',
-    featured: false,
   },
 ]
 

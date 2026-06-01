@@ -40,7 +40,7 @@ export function ProjectCard({ project }: { project: Project }) {
         }
       }}
     >
-      {/* Media placeholder */}
+      {/* Media area */}
       <div style={{
         height: '180px',
         background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.07) 0%, rgba(var(--accent-rgb), 0.02) 50%, rgba(8,8,8,0.5) 100%)',
@@ -51,23 +51,38 @@ export function ProjectCard({ project }: { project: Project }) {
         position: 'relative',
         overflow: 'hidden',
       }}>
-        {/* Scanlines effect */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
-          pointerEvents: 'none',
-        }} />
-        <span style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.65rem',
-          color: 'rgba(var(--accent-rgb), 0.25)',
-          letterSpacing: '0.1em',
-          position: 'relative',
-          zIndex: 1,
-        }}>
-          [ {project.id} ]
-        </span>
+        {project.images && project.images.length > 0 ? (
+          <img
+            src={project.images[0]}
+            alt={project.title}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'top',
+              display: 'block',
+            }}
+          />
+        ) : (
+          <>
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
+              pointerEvents: 'none',
+            }} />
+            <span style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.65rem',
+              color: 'rgba(var(--accent-rgb), 0.25)',
+              letterSpacing: '0.1em',
+              position: 'relative',
+              zIndex: 1,
+            }}>
+              [ {project.id} ]
+            </span>
+          </>
+        )}
 
         <ActionButtons project={project} />
       </div>

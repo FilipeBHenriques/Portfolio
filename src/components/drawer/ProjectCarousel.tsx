@@ -85,26 +85,35 @@ function CarouselCard({ project, onClick }: { project: Project; onClick: () => v
         ;(e.target as HTMLDivElement).style.borderColor = 'var(--border)'
       }}
     >
-      {/* Placeholder image area */}
+      {/* Image / placeholder area */}
       <div
         style={{
           height: '140px',
           borderRadius: '2px',
           background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.08) 0%, rgba(var(--accent-rgb), 0.02) 100%)',
           border: '1px solid rgba(var(--accent-rgb), 0.1)',
+          overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <span style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.7rem',
-          color: 'rgba(var(--accent-rgb), 0.3)',
-          letterSpacing: '0.1em',
-        }}>
-          [ preview ]
-        </span>
+        {project.images && project.images.length > 0 ? (
+          <img
+            src={project.images[0]}
+            alt={project.title}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+          />
+        ) : (
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.7rem',
+            color: 'rgba(var(--accent-rgb), 0.3)',
+            letterSpacing: '0.1em',
+          }}>
+            [ preview ]
+          </span>
+        )}
       </div>
 
       {/* Title */}

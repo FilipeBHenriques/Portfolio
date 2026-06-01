@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { motion, type Variants } from 'framer-motion'
-import { Code2, ExternalLink, ArrowLeft } from 'lucide-react'
+import { Code2, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight, Shield, Maximize2, Minimize2 } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { projects, type Project } from '@/data/projects'
 import { fadeUp, stagger } from '@/lib/motionVariants'
@@ -150,7 +150,6 @@ export function ProjectDetail() {
               >
                 {project.title}
               </h1>
-              {/* Accent underline */}
               <div
                 style={{
                   width: '60px',
@@ -200,10 +199,10 @@ export function ProjectDetail() {
                 color: 'var(--text-muted)',
                 lineHeight: 1.8,
                 maxWidth: '520px',
-                marginBottom: '2rem',
+                marginBottom: '1.5rem',
               }}
             >
-              {project.description}
+              {project.longDescription ?? project.description}
             </motion.p>
 
             {/* Divider */}
@@ -229,13 +228,7 @@ export function ProjectDetail() {
               >
                 {'// stack'}
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '0.5rem',
-                }}
-              >
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
@@ -257,7 +250,7 @@ export function ProjectDetail() {
             </motion.div>
 
             {/* CTA row */}
-            {(project.githubUrl || project.liveUrl) && (
+            {(project.githubUrl || project.liveUrl || project.privacyPolicyUrl) && (
               <motion.div
                 variants={fadeUp}
                 style={{
@@ -289,11 +282,9 @@ export function ProjectDetail() {
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = 'var(--text-muted)'
-                      e.currentTarget.style.color = 'var(--text-primary)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'var(--border)'
-                      e.currentTarget.style.color = 'var(--text-primary)'
                     }}
                   >
                     <Code2 size={14} />
@@ -326,12 +317,44 @@ export function ProjectDetail() {
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.boxShadow = 'none'
-                      e.currentTarget.style.borderColor =
-                        'rgba(var(--accent-rgb), 0.45)'
+                      e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.45)'
                     }}
                   >
                     <ExternalLink size={14} />
                     Live Demo
+                  </a>
+                )}
+                {project.privacyPolicyUrl && (
+                  <a
+                    href={project.privacyPolicyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.78rem',
+                      letterSpacing: '0.06em',
+                      color: 'var(--text-muted)',
+                      background: 'transparent',
+                      border: '1px solid var(--border)',
+                      borderRadius: '3px',
+                      padding: '9px 18px',
+                      textDecoration: 'none',
+                      transition: 'border-color 0.2s, color 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--text-muted)'
+                      e.currentTarget.style.color = 'var(--text-primary)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--border)'
+                      e.currentTarget.style.color = 'var(--text-muted)'
+                    }}
+                  >
+                    <Shield size={14} />
+                    Privacy Policy
                   </a>
                 )}
               </motion.div>
@@ -387,7 +410,388 @@ export function ProjectDetail() {
   )
 }
 
+function ImageGallery({ images }: { images: string[] }) {
+  const [index, setIndex] = useState(0)
+
+  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length)
+  const next = () => setIndex((i) => (i + 1) % images.length)
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      <div
+        style={{
+          width: '100%',
+          aspectRatio: '9/16',
+          maxHeight: '520px',
+          overflow: 'hidden',
+          background: '#000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <motion.img
+          key={index}
+          src={images[index]}
+          alt={`screenshot ${index + 1}`}
+          initial={{ opacity: 0, scale: 1.03 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.25 }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display: 'block',
+          }}
+        />
+      </div>
+
+      {/* Prev / Next */}
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={prev}
+            style={{
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(8,8,8,0.75)',
+              border: '1px solid var(--border)',
+              borderRadius: '3px',
+              color: 'var(--text-muted)',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'color 0.15s, border-color 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--accent)'
+              e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.5)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-muted)'
+              e.currentTarget.style.borderColor = 'var(--border)'
+            }}
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <button
+            onClick={next}
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(8,8,8,0.75)',
+              border: '1px solid var(--border)',
+              borderRadius: '3px',
+              color: 'var(--text-muted)',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'color 0.15s, border-color 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--accent)'
+              e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.5)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-muted)'
+              e.currentTarget.style.borderColor = 'var(--border)'
+            }}
+          >
+            <ChevronRight size={16} />
+          </button>
+
+          {/* Dot indicators */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '6px',
+              padding: '10px 0 0',
+            }}
+          >
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIndex(i)}
+                style={{
+                  width: i === index ? '16px' : '6px',
+                  height: '6px',
+                  borderRadius: '3px',
+                  background: i === index ? 'var(--accent)' : 'var(--border)',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  transition: 'width 0.2s, background 0.2s',
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function EmbedPanel({ project }: { project: Project }) {
+  const [expanded, setExpanded] = useState(false)
+
+  return (
+    <div style={{ width: '100%' }}>
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: expanded ? '600px' : '400px',
+          transition: 'height 0.3s ease',
+          background: '#000',
+          borderRadius: '2px',
+          overflow: 'hidden',
+        }}
+      >
+        <iframe
+          src={project.embedUrl}
+          title={project.title}
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            display: 'block',
+          }}
+          allow="accelerometer; autoplay"
+        />
+        {/* Scanline overlay */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px)',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* Expand toggle */}
+        <button
+          onClick={() => setExpanded((e) => !e)}
+          title={expanded ? 'Collapse' : 'Expand'}
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            right: '10px',
+            background: 'rgba(8,8,8,0.8)',
+            border: '1px solid var(--border)',
+            borderRadius: '3px',
+            color: 'var(--text-muted)',
+            width: '28px',
+            height: '28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            transition: 'color 0.15s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent)')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
+        >
+          {expanded ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+        </button>
+      </div>
+      <div
+        style={{
+          padding: '8px 0 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.6rem',
+            color: 'rgba(var(--accent-rgb), 0.4)',
+            letterSpacing: '0.08em',
+          }}
+        >
+          ● live embed
+        </span>
+        <a
+          href={project.liveUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.6rem',
+            color: 'var(--text-muted)',
+            letterSpacing: '0.06em',
+            textDecoration: 'none',
+            marginLeft: 'auto',
+            opacity: 0.6,
+            transition: 'opacity 0.15s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.6')}
+        >
+          open in new tab ↗
+        </a>
+      </div>
+    </div>
+  )
+}
+
 function PreviewPanel({ project }: { project: Project }) {
+  if (project.embedUrl) {
+    return (
+      <div
+        style={{
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border)',
+          borderRadius: '4px',
+          overflow: 'hidden',
+          padding: '1rem',
+        }}
+      >
+        {project.featured && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginBottom: '0.75rem',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.55rem',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: '#080808',
+                background: 'var(--accent)',
+                borderRadius: '2px',
+                padding: '2px 7px',
+                boxShadow: 'var(--glow-sm)',
+              }}
+            >
+              Featured
+            </span>
+          </div>
+        )}
+        <EmbedPanel project={project} />
+        <div
+          style={{
+            borderTop: '1px solid var(--border)',
+            marginTop: '1rem',
+            paddingTop: '10px',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              color: 'rgba(var(--accent-rgb), 0.3)',
+              letterSpacing: '0.08em',
+            }}
+          >
+            {project.id}.preview
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              color: 'var(--text-muted)',
+              opacity: 0.4,
+              letterSpacing: '0.06em',
+            }}
+          >
+            {project.tags.join(' · ')}
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  if (project.images && project.images.length > 0) {
+    return (
+      <div
+        style={{
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border)',
+          borderRadius: '4px',
+          overflow: 'hidden',
+          padding: '1rem',
+        }}
+      >
+        {project.featured && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginBottom: '0.75rem',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.55rem',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: '#080808',
+                background: 'var(--accent)',
+                borderRadius: '2px',
+                padding: '2px 7px',
+                boxShadow: 'var(--glow-sm)',
+              }}
+            >
+              Featured
+            </span>
+          </div>
+        )}
+        <ImageGallery images={project.images} />
+        <div
+          style={{
+            borderTop: '1px solid var(--border)',
+            marginTop: '1rem',
+            paddingTop: '10px',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              color: 'rgba(var(--accent-rgb), 0.3)',
+              letterSpacing: '0.08em',
+            }}
+          >
+            {project.id}.preview
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              color: 'var(--text-muted)',
+              opacity: 0.4,
+              letterSpacing: '0.06em',
+            }}
+          >
+            {project.tags.join(' · ')}
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -404,7 +808,6 @@ function PreviewPanel({ project }: { project: Project }) {
         justifyContent: 'center',
       }}
     >
-      {/* Watermark text — instance 1 */}
       <span
         aria-hidden
         style={{
@@ -425,7 +828,6 @@ function PreviewPanel({ project }: { project: Project }) {
       >
         {project.id}
       </span>
-      {/* Watermark text — instance 2, offset */}
       <span
         aria-hidden
         style={{
@@ -446,8 +848,6 @@ function PreviewPanel({ project }: { project: Project }) {
       >
         {project.id}
       </span>
-
-      {/* Scanline overlay */}
       <div
         aria-hidden
         style={{
@@ -458,8 +858,6 @@ function PreviewPanel({ project }: { project: Project }) {
           pointerEvents: 'none',
         }}
       />
-
-      {/* Featured badge */}
       {project.featured && (
         <div
           style={{
@@ -481,8 +879,6 @@ function PreviewPanel({ project }: { project: Project }) {
           Featured
         </div>
       )}
-
-      {/* Center content */}
       <div
         style={{
           position: 'relative',
@@ -506,8 +902,6 @@ function PreviewPanel({ project }: { project: Project }) {
         >
           [ NO PREVIEW ]
         </span>
-
-        {/* Icon buttons */}
         {(project.githubUrl || project.liveUrl) && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {project.githubUrl && (
@@ -573,8 +967,6 @@ function PreviewPanel({ project }: { project: Project }) {
           </div>
         )}
       </div>
-
-      {/* Bottom meta strip */}
       <div
         style={{
           position: 'absolute',

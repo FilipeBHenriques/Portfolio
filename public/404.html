@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <script>
     // GitHub Pages SPA redirect: store the path and redirect to index
-    var path = window.location.pathname.replace('/Portfolio', '') || '/';
+    var path = window.location.pathname;
     sessionStorage.setItem('redirect', path + window.location.search);
     window.location.replace('/Portfolio/');
   </script>
