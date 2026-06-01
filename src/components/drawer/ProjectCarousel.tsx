@@ -14,7 +14,7 @@ export function ProjectCarousel({ projects, onClose }: ProjectCarouselProps) {
 
   const handleCardClick = (id: string) => {
     onClose()
-    navigate(`/projects?focus=${id}`)
+    navigate(`/projects/${id}`)
   }
 
   return (

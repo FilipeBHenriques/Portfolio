@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { motion, type Variants } from 'framer-motion'
-import { Code2, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight, Shield, Maximize2, Minimize2 } from 'lucide-react'
+import { Code2, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight, Shield } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { projects, type Project } from '@/data/projects'
 import { fadeUp, stagger } from '@/lib/motionVariants'
@@ -33,69 +34,55 @@ function GooglePlayBadge({ href }: { href: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '10px',
-        padding: '10px 20px',
-        borderRadius: '6px',
-        background: 'linear-gradient(135deg, #1a2a1a 0%, #0f1f0f 100%)',
-        border: '1px solid rgba(var(--accent-rgb), 0.55)',
-        boxShadow: '0 0 14px rgba(var(--accent-rgb), 0.22), inset 0 1px 0 rgba(var(--accent-rgb), 0.12)',
+        gap: '12px',
+        padding: '10px 20px 10px 14px',
+        borderRadius: '8px',
+        background: 'rgba(var(--accent-rgb), 0.05)',
+        border: '1px solid rgba(var(--accent-rgb), 0.45)',
         textDecoration: 'none',
         cursor: 'pointer',
-        transition: 'box-shadow 0.2s',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
+        boxShadow: '0 0 14px rgba(var(--accent-rgb), 0.2), inset 0 1px 0 rgba(var(--accent-rgb), 0.06)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow =
-          '0 0 28px rgba(var(--accent-rgb), 0.45), inset 0 1px 0 rgba(var(--accent-rgb), 0.2)'
+        e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.8)'
+        e.currentTarget.style.boxShadow = '0 0 28px rgba(var(--accent-rgb), 0.45), 0 0 60px rgba(var(--accent-rgb), 0.15), inset 0 1px 0 rgba(var(--accent-rgb), 0.12)'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow =
-          '0 0 14px rgba(var(--accent-rgb), 0.22), inset 0 1px 0 rgba(var(--accent-rgb), 0.12)'
+        e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.45)'
+        e.currentTarget.style.boxShadow = '0 0 14px rgba(var(--accent-rgb), 0.2), inset 0 1px 0 rgba(var(--accent-rgb), 0.06)'
       }}
     >
-      {/* Play Store triangle icon */}
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M3.18 23.76c.4.22.86.24 1.28.04l13.1-7.56-3.02-3.02L3.18 23.76z"
-          fill="var(--accent)"
-          opacity="0.7"
-        />
-        <path
-          d="M21.54 10.27a1.96 1.96 0 0 0 0 3.46l-17.36 10a2 2 0 0 1-.04-3.5L17.56 12 4.14 3.77a2 2 0 0 1 .04-3.5l17.36 10z"
-          fill="var(--accent)"
-        />
-        <path
-          d="M3.18.24C2.78.04 2.32.06 1.92.28L14.54 13.22l3.02-3.02L3.18.24z"
-          fill="var(--accent)"
-          opacity="0.7"
-        />
+      {/* Google Play 4-color icon */}
+      <svg width="20" height="22" viewBox="0 0 20 22" fill="none">
+        <path d="M1 0.5L10 5.75L7 11L1 11Z" fill="#4285F4"/>
+        <path d="M10 5.75L19 11L7 11Z" fill="#FBBC04"/>
+        <path d="M7 11L19 11L10 16.25Z" fill="#EA4335"/>
+        <path d="M1 11L7 11L10 16.25L1 21.5Z" fill="#34A853"/>
       </svg>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.55rem',
-            letterSpacing: '0.12em',
-            color: 'rgba(var(--accent-rgb), 0.65)',
-            textTransform: 'uppercase',
-          }}
-        >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <span style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.57rem',
+          letterSpacing: '0.1em',
+          color: 'rgba(255,255,255,0.45)',
+          textTransform: 'uppercase',
+        }}>
           Get it on
         </span>
-        <span
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '0.95rem',
-            fontWeight: 600,
-            color: 'var(--accent)',
-            letterSpacing: '0.01em',
-            lineHeight: 1,
-          }}
-        >
+        <span style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '1rem',
+          fontWeight: 600,
+          color: '#fff',
+          letterSpacing: '0.01em',
+          lineHeight: 1,
+        }}>
           Google Play
         </span>
       </div>
@@ -492,19 +479,21 @@ export function ProjectDetail() {
   )
 }
 
-function ImageGallery({ images }: { images: string[] }) {
+function ImageGallery({ images, expanded = false, floating = false }: { images: string[]; expanded?: boolean; floating?: boolean }) {
   const [index, setIndex] = useState(0)
 
   const prev = () => setIndex((i) => (i - 1 + images.length) % images.length)
   const next = () => setIndex((i) => (i + 1) % images.length)
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
+    <div style={{ position: 'relative', width: '100%', ...(floating ? { display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 } : {}) }}>
       <div
         style={{
           width: '100%',
-          aspectRatio: '9/16',
-          maxHeight: '520px',
+          ...(floating
+            ? { flex: 1, minHeight: 0 }
+            : { aspectRatio: '9/16', maxHeight: expanded ? '900px' : '520px', transition: 'max-height 0.4s ease' }
+          ),
           overflow: 'hidden',
           background: '#000',
           display: 'flex',
@@ -617,17 +606,14 @@ function ImageGallery({ images }: { images: string[] }) {
   )
 }
 
-function EmbedPanel({ project }: { project: Project }) {
-  const [expanded, setExpanded] = useState(false)
-
+function EmbedPanel({ project, expanded = false, floating = false }: { project: Project; expanded?: boolean; floating?: boolean }) {
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', ...(floating ? { display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 } : {}) }}>
       <div
         style={{
           position: 'relative',
           width: '100%',
-          height: expanded ? '600px' : '400px',
-          transition: 'height 0.3s ease',
+          ...(floating ? { flex: 1, minHeight: 0 } : { height: expanded ? '680px' : '400px', transition: 'height 0.4s ease' }),
           background: '#000',
           borderRadius: '2px',
           overflow: 'hidden',
@@ -649,30 +635,6 @@ function EmbedPanel({ project }: { project: Project }) {
             pointerEvents: 'none',
           }}
         />
-        <button
-          onClick={() => setExpanded((e) => !e)}
-          title={expanded ? 'Collapse' : 'Expand'}
-          style={{
-            position: 'absolute',
-            bottom: '10px',
-            right: '10px',
-            background: 'rgba(8,8,8,0.8)',
-            border: '1px solid var(--border)',
-            borderRadius: '3px',
-            color: 'var(--text-muted)',
-            width: '28px',
-            height: '28px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'color 0.15s',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent)')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
-        >
-          {expanded ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
-        </button>
       </div>
       <div style={{ padding: '8px 0 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
         <span
@@ -710,253 +672,184 @@ function EmbedPanel({ project }: { project: Project }) {
 }
 
 function PreviewPanel({ project }: { project: Project }) {
-  const panelBase: React.CSSProperties = {
-    background: 'var(--bg-surface)',
-    border: '1px solid var(--border)',
-    borderRadius: '4px',
-    overflow: 'hidden',
-    padding: '1rem',
+  const canFloat = Boolean(project.floatingPreview)
+  const [expanded, setExpanded] = useState(false)
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+  const [winWidth, setWinWidth] = useState(0)
+  const [winHeight, setWinHeight] = useState(0)
+  const [ready, setReady] = useState(false)
+  const ghostRef = useRef<HTMLDivElement>(null)
+  const dragOffset = useRef({ x: 0, y: 0 })
+
+  // Measure ghost div position before first paint so window appears in the right place
+  useLayoutEffect(() => {
+    if (!canFloat || !ghostRef.current) return
+    const rect = ghostRef.current.getBoundingClientRect()
+    setPos({ x: rect.left, y: rect.top })
+    setWinWidth(rect.width)
+    setWinHeight(Math.min(Math.max(rect.height, 460), window.innerHeight - rect.top - 24))
+    setReady(true)
+  }, [canFloat])
+
+  const beginDrag = (e: React.MouseEvent) => {
+    dragOffset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y }
+    const onMove = (ev: MouseEvent) => {
+      setPos({ x: ev.clientX - dragOffset.current.x, y: ev.clientY - dragOffset.current.y })
+    }
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+    e.preventDefault()
   }
 
-  const metaStrip = (
+  const beginResize = (e: React.MouseEvent) => {
+    const startX = e.clientX
+    const startY = e.clientY
+    const startW = winWidth
+    const startH = winHeight
+    const onMove = (ev: MouseEvent) => {
+      setWinWidth(Math.max(320, startW + ev.clientX - startX))
+      setWinHeight(Math.max(200, startH + ev.clientY - startY))
+    }
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const previewContent = (isFloating: boolean) => project.embedUrl
+    ? <EmbedPanel project={project} expanded={expanded} floating={isFloating} />
+    : project.images?.length
+    ? <ImageGallery images={project.images} expanded={expanded} floating={isFloating} />
+    : null
+
+  const staticBody = previewContent(false) ?? (
+    project.icon ? (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 0' }}>
+        <div style={{ position: 'relative', width: '120px', height: '120px' }}>
+          <div style={{ position: 'absolute', inset: '-16px', borderRadius: '32px', background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
+          <img src={project.icon} alt={`${project.title} icon`} style={{ width: '120px', height: '120px', borderRadius: '22px', boxShadow: '0 0 40px rgba(var(--accent-rgb), 0.25), 0 8px 32px rgba(0,0,0,0.6)', display: 'block', position: 'relative', zIndex: 1 }} />
+        </div>
+      </div>
+    ) : (
+      <div style={{ minHeight: '340px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span aria-hidden style={{ position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%) rotate(-15deg)', fontFamily: 'var(--font-display)', fontSize: '7rem', fontWeight: 700, color: 'var(--accent)', opacity: 0.04, whiteSpace: 'nowrap', pointerEvents: 'none', userSelect: 'none', letterSpacing: '-0.04em' }}>{project.id}</span>
+        <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px)', pointerEvents: 'none' }} />
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.12em', border: '1px solid var(--border)', padding: '6px 14px', borderRadius: '2px', position: 'relative', zIndex: 1 }}>[ NO PREVIEW ]</span>
+      </div>
+    )
+  )
+
+  const terminalBar = (draggable: boolean) => (
     <div
-      style={{
-        borderTop: '1px solid var(--border)',
-        marginTop: '1rem',
-        paddingTop: '10px',
-        display: 'flex',
-        justifyContent: 'space-between',
-      }}
+      onMouseDown={draggable ? beginDrag : undefined}
+      style={{ display: 'flex', alignItems: 'center', padding: '8px 12px', background: 'rgba(255,255,255,0.025)', borderBottom: '1px solid rgba(255,255,255,0.08)', gap: '8px', cursor: draggable ? 'grab' : 'default', userSelect: 'none', flexShrink: 0 }}
     >
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(var(--accent-rgb), 0.3)', letterSpacing: '0.08em' }}>
-        {project.id}.preview
+      <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f57', flexShrink: 0 }} />
+        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#febc2e', flexShrink: 0 }} />
+        <button
+          onMouseDown={e => e.stopPropagation()}
+          onClick={e => { e.stopPropagation(); setExpanded(v => !v) }}
+          title={expanded ? 'Collapse' : 'Expand'}
+          style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#28c840', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0, transition: 'transform 0.15s' }}
+          onMouseEnter={ev => ((ev.currentTarget as HTMLButtonElement).style.transform = 'scale(1.4)')}
+          onMouseLeave={ev => ((ev.currentTarget as HTMLButtonElement).style.transform = 'scale(1)')}
+        />
+      </div>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.28)', flex: 1, textAlign: 'center', letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        ~/{project.id}/preview
       </span>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-muted)', opacity: 0.4, letterSpacing: '0.06em' }}>
-        {project.tags.join(' · ')}
-      </span>
+      {project.featured && (
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#080808', background: 'var(--accent)', borderRadius: '2px', padding: '2px 6px', boxShadow: 'var(--glow-sm)', flexShrink: 0 }}>featured</span>
+      )}
     </div>
   )
 
-  const featuredBadge = project.featured && (
-    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
-      <span
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.55rem',
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: '#080808',
-          background: 'var(--accent)',
-          borderRadius: '2px',
-          padding: '2px 7px',
-          boxShadow: 'var(--glow-sm)',
-        }}
-      >
-        Featured
-      </span>
+  const metaBar = (
+    <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '8px 12px', display: 'flex', justifyContent: 'space-between', flexShrink: 0 }}>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(var(--accent-rgb), 0.3)', letterSpacing: '0.08em' }}>{project.id}.preview</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-muted)', opacity: 0.4, letterSpacing: '0.06em' }}>{project.tags.join(' · ')}</span>
     </div>
   )
 
-  if (project.embedUrl) {
+  // Floating terminal — always a free window, ghost div holds the layout space
+  if (canFloat) {
     return (
-      <div style={panelBase}>
-        {featuredBadge}
-        <EmbedPanel project={project} />
-        {metaStrip}
-      </div>
-    )
-  }
-
-  if (project.images && project.images.length > 0) {
-    return (
-      <div style={panelBase}>
-        {featuredBadge}
-        <ImageGallery images={project.images} />
-        {metaStrip}
-      </div>
-    )
-  }
-
-  if (project.icon) {
-    return (
-      <div style={panelBase}>
-        {featuredBadge}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '3rem 0',
-          }}
-        >
+      <>
+        <div ref={ghostRef} style={{ width: '100%', minHeight: '460px' }} />
+        {ready && createPortal(
           <div
             style={{
-              position: 'relative',
-              width: '120px',
-              height: '120px',
+              position: 'fixed',
+              left: `${pos.x}px`,
+              top: `${pos.y}px`,
+              width: `${winWidth}px`,
+              height: `${winHeight}px`,
+              zIndex: 9999,
+              background: '#0a0a0a',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '8px',
+              boxShadow: '0 32px 80px rgba(0,0,0,0.75), 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            {/* Glow ring */}
+            {terminalBar(true)}
+            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1, minHeight: 0 }}>
+              {previewContent(true) ?? staticBody}
+            </div>
+            {metaBar}
+            {/* Resize grip — bottom-right corner */}
             <div
+              onMouseDown={beginResize}
               style={{
                 position: 'absolute',
-                inset: '-16px',
-                borderRadius: '32px',
-                background: 'radial-gradient(circle, rgba(var(--accent-rgb), 0.15) 0%, transparent 70%)',
-                pointerEvents: 'none',
+                bottom: 0,
+                right: 0,
+                width: '32px',
+                height: '32px',
+                cursor: 'se-resize',
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+                padding: '6px',
+                color: 'rgba(255,255,255,0.4)',
+                transition: 'color 0.15s',
               }}
-            />
-            <img
-              src={project.icon}
-              alt={`${project.title} icon`}
-              style={{
-                width: '120px',
-                height: '120px',
-                borderRadius: '22px',
-                boxShadow: '0 0 40px rgba(var(--accent-rgb), 0.25), 0 8px 32px rgba(0,0,0,0.6)',
-                display: 'block',
-                position: 'relative',
-                zIndex: 1,
-              }}
-            />
-          </div>
-        </div>
-        {metaStrip}
-      </div>
+              onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.color = 'var(--accent)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.color = 'rgba(255,255,255,0.4)')}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <circle cx="2" cy="10" r="1.5" fill="currentColor"/>
+                <circle cx="6" cy="10" r="1.5" fill="currentColor"/>
+                <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+                <circle cx="6" cy="6" r="1.5" fill="currentColor"/>
+                <circle cx="10" cy="6" r="1.5" fill="currentColor"/>
+                <circle cx="10" cy="2" r="1.5" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>,
+          document.body
+        )}
+      </>
     )
   }
 
-  // Fallback — no preview
+  // Normal docked panel (floatingPreview not set)
   return (
-    <div
-      style={{
-        background: 'var(--bg-surface)',
-        border: '1px solid var(--border)',
-        borderRadius: '4px',
-        minHeight: '420px',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: '18%',
-          left: '50%',
-          transform: 'translateX(-50%) rotate(-15deg)',
-          fontFamily: 'var(--font-display)',
-          fontSize: '7.5rem',
-          fontWeight: 700,
-          color: 'var(--accent)',
-          opacity: 0.04,
-          whiteSpace: 'nowrap',
-          pointerEvents: 'none',
-          userSelect: 'none',
-          letterSpacing: '-0.04em',
-        }}
-      >
-        {project.id}
-      </span>
-      <span
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: '55%',
-          left: '60%',
-          transform: 'translateX(-50%) rotate(-15deg)',
-          fontFamily: 'var(--font-display)',
-          fontSize: '7.5rem',
-          fontWeight: 700,
-          color: 'var(--accent)',
-          opacity: 0.04,
-          whiteSpace: 'nowrap',
-          pointerEvents: 'none',
-          userSelect: 'none',
-          letterSpacing: '-0.04em',
-        }}
-      >
-        {project.id}
-      </span>
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage:
-            'repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px)',
-          pointerEvents: 'none',
-        }}
-      />
-      {project.featured && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '14px',
-            right: '14px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.55rem',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: '#080808',
-            background: 'var(--accent)',
-            borderRadius: '2px',
-            padding: '2px 7px',
-            boxShadow: 'var(--glow-sm)',
-            zIndex: 2,
-          }}
-        >
-          Featured
-        </div>
-      )}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1.25rem',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.75rem',
-            color: 'var(--text-muted)',
-            letterSpacing: '0.12em',
-            border: '1px solid var(--border)',
-            padding: '6px 14px',
-            borderRadius: '2px',
-          }}
-        >
-          [ NO PREVIEW ]
-        </span>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          borderTop: '1px solid var(--border)',
-          padding: '10px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(var(--accent-rgb), 0.3)', letterSpacing: '0.08em' }}>
-          {project.id}.preview
-        </span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-muted)', opacity: 0.4, letterSpacing: '0.06em' }}>
-          {project.tags.join(' · ')}
-        </span>
-      </div>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden' }}>
+      {terminalBar(false)}
+      <div style={{ padding: '1rem' }}>{staticBody}</div>
+      {metaBar}
     </div>
   )
 }
