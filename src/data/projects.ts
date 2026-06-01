@@ -11,6 +11,14 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 'quit',
+    title: 'QUIT — App Blocker',
+    description: 'Android app that helps you quit gambling by blocking distracting apps with a twist: you gamble for your own screen time. Built with Flutter and Kotlin, it features daily time limits, a real-time monitoring service, bonus rounds, and a social layer where friends can gift each other time. Published on the Play Store.',
+    tags: ['Flutter', 'Android', 'Kotlin', 'Supabase'],
+    githubUrl: 'https://github.com/FilipeBHenriques/QUIT',
+    featured: true,
+  },
+  {
     id: 'devshell',
     title: 'DevShell',
     description: 'A terminal multiplexer written in Go with a custom session manager, plugin system, and scriptable keybindings. Handles nested sessions, persistent history, and workspace state restoration on boot.',
