@@ -51,18 +51,14 @@ export function ProjectCard({ project }: { project: Project }) {
         position: 'relative',
         overflow: 'hidden',
       }}>
-        {project.images && project.images.length > 0 ? (
-          <img
-            src={project.images[0]}
-            alt={project.title}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'top',
-              display: 'block',
-            }}
-          />
+        {project.icon ? (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.06) 0%, rgba(var(--accent-rgb), 0.01) 100%)' }}>
+            <img
+              src={project.icon}
+              alt={project.title}
+              style={{ width: '72px', height: '72px', borderRadius: '14px', boxShadow: '0 0 24px rgba(var(--accent-rgb), 0.2), 0 4px 16px rgba(0,0,0,0.5)', display: 'block' }}
+            />
+          </div>
         ) : (
           <>
             <div style={{

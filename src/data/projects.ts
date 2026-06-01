@@ -6,9 +6,10 @@ export interface Project {
   tags: string[]
   githubUrl?: string
   liveUrl?: string
+  storeUrl?: string
   embedUrl?: string
   videoUrl?: string
-  images?: string[]
+  icon?: string
   privacyPolicyUrl?: string
   featured: boolean
 }
@@ -21,14 +22,8 @@ export const projects: Project[] = [
     longDescription: 'QUIT flips the script on screen-time apps: instead of just locking you out, it turns your remaining daily allowance into chips. Want more time? Win it back at the table. Lose, and the apps stay blocked. Built with Flutter and Kotlin, it uses Android\'s AccessibilityService and overlay APIs to enforce blocks in real time. A Supabase backend handles cloud sync, friend gifting (send someone extra time), and persistent stats. Three mini-games — BlackJack, Mines, and Roulette — are built from scratch with proper RNG and bet management. The monitoring foreground service survives app kills and device restarts.',
     tags: ['Flutter', 'Kotlin', 'Android', 'Supabase'],
     githubUrl: 'https://github.com/FilipeBHenriques/QUIT',
-    images: [
-      '/Portfolio/projects/quit/feature-graphic.png',
-      '/Portfolio/projects/quit/Main.png',
-      '/Portfolio/projects/quit/Stats.png',
-      '/Portfolio/projects/quit/BlackJack.png',
-      '/Portfolio/projects/quit/Mines.png',
-      '/Portfolio/projects/quit/Roullete.png',
-    ],
+    storeUrl: 'https://play.google.com/store/apps/details?id=com.yelhow.quit',
+    icon: '/Portfolio/projects/quit/app_icon.png',
     privacyPolicyUrl: '/Portfolio/privacy-quit.html',
     featured: true,
   },

@@ -98,12 +98,14 @@ function CarouselCard({ project, onClick }: { project: Project; onClick: () => v
           justifyContent: 'center',
         }}
       >
-        {project.images && project.images.length > 0 ? (
-          <img
-            src={project.images[0]}
-            alt={project.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
-          />
+        {project.icon ? (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img
+              src={project.icon}
+              alt={project.title}
+              style={{ width: '60px', height: '60px', borderRadius: '12px', boxShadow: '0 0 20px rgba(var(--accent-rgb), 0.18)', display: 'block' }}
+            />
+          </div>
         ) : (
           <span style={{
             fontFamily: 'var(--font-mono)',
