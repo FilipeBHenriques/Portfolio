@@ -1,7 +1,7 @@
 // src/components/hero/RetroShell.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MatrixRain } from "./MatrixRain";
+
 import { projects } from "@/data/projects";
 
 interface ShellLine {
@@ -29,7 +29,7 @@ const BOOT_SEQUENCE = [
   "Type /help for available commands.",
 ];
 
-const COMMANDS = ["/help", "/whoami", "/skills", "/color", "/clear", "/matrix", "cd", "ls"];
+const COMMANDS = ["/help", "/whoami", "/skills", "/color", "/clear", "cd", "ls"];
 const COLOR_OPTIONS = ["green", "cyan", "purple", "orange", "red", "pink"];
 const HOME_OPTION = {
   value: "cd home",
@@ -75,7 +75,6 @@ export function RetroShell({ onClose }: { onClose?: () => void }) {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [booting, setBooting] = useState(true);
-  const [matrixActive, setMatrixActive] = useState(false);
   const [shellSize, setShellSize] = useState({ width: 540, height: 360 });
   const [shellOffset, setShellOffset] = useState({ x: 0, y: 0 });
   const [maximized, setMaximized] = useState(false);
@@ -216,24 +215,22 @@ export function RetroShell({ onClose }: { onClose?: () => void }) {
         add("  cd <project>       - open a project");
         add("  /color <name>      - change accent color");
         add("  /clear             - clear terminal");
-        add("  /matrix            - classic matrix rain");
         add("");
         add("  colors: green | cyan | purple | orange | red | pink");
         break;
 
       case "/whoami":
-        add("Filipe - Software Engineer", "success");
-        add("Builds performant systems and obsessive UIs.");
-        add("From low-level Go services to browser-native experiences.");
-        add("Cares deeply about the craft.");
+        add("Filipe - Software Engineer & AI enjoyer", "success");
+        add("Builds things. Breaks things. Fixes things.");
+        add("Volleyball fanatic. Game lover.");
+        add("Picks up whatever is needed to ship the next thing.");
         break;
 
       case "/skills":
         add("$ ls ~/skills/", "echo");
-        add("Go              TypeScript      React", "success");
-        add("Node.js         PostgreSQL      Redis", "success");
-        add("Docker          Kubernetes      Linux", "success");
-        add("Vite            Tailwind        Framer Motion", "success");
+        add("Python          TypeScript      AWS", "success");
+        add("SQL             React           Node.js", "success");
+        add("...and whatever the next project needs", "success");
         break;
 
       case "cd": {
@@ -267,17 +264,6 @@ export function RetroShell({ onClose }: { onClose?: () => void }) {
 
       case "/clear":
         setLines([]);
-        break;
-
-      case "/matrix":
-        setMatrixActive(true);
-        setTimeout(() => {
-          setMatrixActive(false);
-          setLines((prev) => [
-            ...prev,
-            { id: uid(), text: "[matrix rain ended]", variant: "output" },
-          ]);
-        }, 2400);
         break;
 
       case "/color": {
@@ -678,34 +664,30 @@ export function RetroShell({ onClose }: { onClose?: () => void }) {
           borderRadius: "0 0 4px 4px",
         }}
       >
-        {matrixActive ? (
-          <MatrixRain />
-        ) : (
-          lines.map((line) => (
-            <div
-              key={line.id}
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "12px",
-                lineHeight: 1.65,
-                whiteSpace: "pre",
-                color:
-                  line.variant === "error"
-                    ? "#ff4444"
-                    : line.variant === "success"
-                      ? "var(--accent)"
-                      : line.variant === "echo"
-                        ? "#888888"
-                        : "var(--text-primary)",
-              }}
-            >
-              {line.text}
-            </div>
-          ))
-        )}
+        {lines.map((line) => (
+          <div
+            key={line.id}
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "12px",
+              lineHeight: 1.65,
+              whiteSpace: "pre",
+              color:
+                line.variant === "error"
+                  ? "#ff4444"
+                  : line.variant === "success"
+                    ? "var(--accent)"
+                    : line.variant === "echo"
+                      ? "#888888"
+                      : "var(--text-primary)",
+            }}
+          >
+            {line.text}
+          </div>
+        ))}
       </div>
 
-      {!booting && !matrixActive && (
+      {!booting && (
         <div
           style={{
             display: "flex",

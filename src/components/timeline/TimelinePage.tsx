@@ -95,7 +95,7 @@ export function TimelinePage() {
       style={{
         height: 'calc(100vh - 56px)',
         overflowY: 'scroll',
-        scrollSnapType: 'y proximity',
+        scrollSnapType: 'y mandatory',
         scrollBehavior: 'smooth',
         scrollPaddingTop: '16px',
       }}
@@ -260,13 +260,11 @@ export function TimelinePage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '1.5rem',
+            gap: '1rem',
             width: '100%',
             maxWidth: '1240px',
             position: 'relative',
             zIndex: 1,
-            transform: 'scale(0.96)',
-            transformOrigin: 'center center',
             overflowX: 'auto',
             padding: '1.25rem 0.75rem',
           }}
@@ -284,7 +282,8 @@ export function TimelinePage() {
                 gridTemplateRows: '1fr 20px 1fr',
                 alignItems: 'center',
                 cursor: 'pointer',
-                minWidth: '250px',
+                minWidth: '170px',
+                height: '210px',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '0.8rem' }}>
@@ -356,7 +355,7 @@ function OverviewCard({
         border: '1px solid var(--border)',
         background: 'var(--bg-surface)',
         transition: 'border-color 0.2s, box-shadow 0.2s',
-        maxWidth: '320px',
+        maxWidth: '180px',
         transformOrigin: align === 'left' ? 'left center' : align === 'right' ? 'right center' : 'center center',
       }}
       onMouseEnter={(e) => {
