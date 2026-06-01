@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { motion, type Variants } from 'framer-motion'
-import { Code2, ExternalLink, ArrowLeft, Shield, Maximize2, Minimize2 } from 'lucide-react'
+import { Code2, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight, Shield, Maximize2, Minimize2 } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
 import { projects, type Project } from '@/data/projects'
 import { fadeUp, stagger } from '@/lib/motionVariants'
@@ -492,6 +492,131 @@ export function ProjectDetail() {
   )
 }
 
+function ImageGallery({ images }: { images: string[] }) {
+  const [index, setIndex] = useState(0)
+
+  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length)
+  const next = () => setIndex((i) => (i + 1) % images.length)
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      <div
+        style={{
+          width: '100%',
+          aspectRatio: '9/16',
+          maxHeight: '520px',
+          overflow: 'hidden',
+          background: '#000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <motion.img
+          key={index}
+          src={images[index]}
+          alt={`screenshot ${index + 1}`}
+          initial={{ opacity: 0, scale: 1.03 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.25 }}
+          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+        />
+      </div>
+
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={prev}
+            style={{
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(8,8,8,0.75)',
+              border: '1px solid var(--border)',
+              borderRadius: '3px',
+              color: 'var(--text-muted)',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'color 0.15s, border-color 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--accent)'
+              e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.5)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-muted)'
+              e.currentTarget.style.borderColor = 'var(--border)'
+            }}
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <button
+            onClick={next}
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(8,8,8,0.75)',
+              border: '1px solid var(--border)',
+              borderRadius: '3px',
+              color: 'var(--text-muted)',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'color 0.15s, border-color 0.15s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--accent)'
+              e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.5)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-muted)'
+              e.currentTarget.style.borderColor = 'var(--border)'
+            }}
+          >
+            <ChevronRight size={16} />
+          </button>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '6px',
+              padding: '10px 0 0',
+            }}
+          >
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIndex(i)}
+                style={{
+                  width: i === index ? '16px' : '6px',
+                  height: '6px',
+                  borderRadius: '3px',
+                  background: i === index ? 'var(--accent)' : 'var(--border)',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  transition: 'width 0.2s, background 0.2s',
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 function EmbedPanel({ project }: { project: Project }) {
   const [expanded, setExpanded] = useState(false)
 
@@ -637,6 +762,16 @@ function PreviewPanel({ project }: { project: Project }) {
       <div style={panelBase}>
         {featuredBadge}
         <EmbedPanel project={project} />
+        {metaStrip}
+      </div>
+    )
+  }
+
+  if (project.images && project.images.length > 0) {
+    return (
+      <div style={panelBase}>
+        {featuredBadge}
+        <ImageGallery images={project.images} />
         {metaStrip}
       </div>
     )
