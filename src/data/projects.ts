@@ -47,10 +47,11 @@ export const projects: Project[] = [
     longDescription:
       "ProcAIstination is a short Windows-focused test app built with Electron, React, and Three.js to explore how an AI desktop companion could feel in practice. The ghost floats above the desktop, reacts to context from the active workspace, and experiments with playful interventions like opening apps, surfacing memes, and answering prompts through a local Ollama model. It is intentionally lightweight and exploratory rather than production-ready, and the current portfolio preview uses a recorded demo from the real app. Natural next steps would be better context detection, safer action boundaries, stronger memory and personalization, and cleaner desktop-native UX.",
     tags: ["Electron", "React", "Three.js", "Ollama", "Desktop AI"],
-    githubUrl: "https://github.com/FilipeBHenriques/ProcAIstination",
+    githubUrl: "https://github.com/FilipeBHenriques/mini-assistant",
     videoUrl: `${baseUrl}projects/procaistination/ghost-ai-demo.mp4`,
     icon: `${baseUrl}projects/procaistination/logo192.png`,
     featured: true,
+    floatingPreview: true,
   },
   {
     id: "algo-visualizer",

@@ -67,6 +67,79 @@ export function ProjectCard({ project }: { project: Project }) {
               />
             )}
           </div>
+        ) : project.videoUrl ? (
+          <div style={{ width: '100%', height: '100%', position: 'relative', background: 'radial-gradient(circle at 50% 20%, rgba(var(--accent-rgb), 0.18), transparent 35%), linear-gradient(180deg, rgba(10,16,10,0.95) 0%, rgba(8,8,8,0.98) 100%)' }}>
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(86,255,86,0.07) 2px, rgba(86,255,86,0.07) 4px)',
+              pointerEvents: 'none',
+            }} />
+            <div style={{
+              position: 'absolute',
+              inset: '18px',
+              border: '1px solid rgba(var(--accent-rgb), 0.18)',
+              borderRadius: '4px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              padding: '14px',
+            }}>
+              <div style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.58rem',
+                letterSpacing: '0.14em',
+                color: 'rgba(var(--accent-rgb), 0.72)',
+              }}>
+                {'>'} recorded desktop demo
+              </div>
+              <div style={{
+                alignSelf: 'center',
+                width: '54px',
+                height: '54px',
+                borderRadius: '50%',
+                border: '1px solid rgba(var(--accent-rgb), 0.3)',
+                background: 'rgba(var(--accent-rgb), 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 22px rgba(var(--accent-rgb), 0.16)',
+              }}>
+                <div style={{
+                  width: 0,
+                  height: 0,
+                  borderTop: '9px solid transparent',
+                  borderBottom: '9px solid transparent',
+                  borderLeft: '14px solid var(--accent)',
+                  marginLeft: '4px',
+                }} />
+              </div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                gap: '12px',
+              }}>
+                <span style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                }}>
+                  {project.title}
+                </span>
+                <span style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.56rem',
+                  letterSpacing: '0.12em',
+                  color: 'rgba(var(--accent-rgb), 0.55)',
+                  textTransform: 'uppercase',
+                }}>
+                  mp4 preview
+                </span>
+              </div>
+            </div>
+          </div>
         ) : project.icon ? (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.06) 0%, rgba(var(--accent-rgb), 0.01) 100%)' }}>
             <img
