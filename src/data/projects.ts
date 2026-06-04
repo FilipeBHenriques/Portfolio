@@ -16,6 +16,8 @@ export interface Project {
   floatingPreview?: boolean;
 }
 
+const baseUrl = import.meta.env.BASE_URL;
+
 export const projects: Project[] = [
   {
     id: "quit",
@@ -27,14 +29,27 @@ export const projects: Project[] = [
     tags: ["Flutter", "Kotlin", "Android", "Supabase"],
     storeUrl: "https://play.google.com/store/apps/details?id=com.quitapppppp",
     images: [
-      "/Portfolio/projects/quit/Main.png",
-      "/Portfolio/projects/quit/Stats.png",
-      "/Portfolio/projects/quit/BlackJack.png",
-      "/Portfolio/projects/quit/Mines.png",
-      "/Portfolio/projects/quit/Roullete.png",
+      `${baseUrl}projects/quit/Main.png`,
+      `${baseUrl}projects/quit/Stats.png`,
+      `${baseUrl}projects/quit/BlackJack.png`,
+      `${baseUrl}projects/quit/Mines.png`,
+      `${baseUrl}projects/quit/Roullete.png`,
     ],
-    icon: "/Portfolio/projects/quit/app_icon.png",
-    privacyPolicyUrl: "/Portfolio/privacy-quit.html",
+    icon: `${baseUrl}projects/quit/app_icon.png`,
+    privacyPolicyUrl: `${baseUrl}privacy-quit.html`,
+    featured: true,
+  },
+  {
+    id: "procaistination",
+    title: "ProcAIstination",
+    description:
+      "A short desktop AI experiment built to test how a playful assistant might behave on top of a real Windows workspace, with local prompts, ghost reactions, and a lightweight command layer.",
+    longDescription:
+      "ProcAIstination is a short Windows-focused test app built with Electron, React, and Three.js to explore how an AI desktop companion could feel in practice. The ghost floats above the desktop, reacts to context from the active workspace, and experiments with playful interventions like opening apps, surfacing memes, and answering prompts through a local Ollama model. It is intentionally lightweight and exploratory rather than production-ready, and the current portfolio preview uses a recorded demo from the real app. Natural next steps would be better context detection, safer action boundaries, stronger memory and personalization, and cleaner desktop-native UX.",
+    tags: ["Electron", "React", "Three.js", "Ollama", "Desktop AI"],
+    githubUrl: "https://github.com/FilipeBHenriques/ProcAIstination",
+    videoUrl: `${baseUrl}projects/procaistination/ghost-ai-demo.mp4`,
+    icon: `${baseUrl}projects/procaistination/logo192.png`,
     featured: true,
   },
   {

@@ -671,6 +671,65 @@ function EmbedPanel({ project, expanded = false, floating = false }: { project: 
   )
 }
 
+function VideoPanel({ project, expanded = false, floating = false }: { project: Project; expanded?: boolean; floating?: boolean }) {
+  return (
+    <div style={{ width: '100%', ...(floating ? { display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 } : {}) }}>
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          ...(floating
+            ? { flex: 1, minHeight: 0 }
+            : { aspectRatio: '16/9', maxHeight: expanded ? '720px' : '420px', transition: 'max-height 0.4s ease' }),
+          background: '#000',
+          borderRadius: '2px',
+          overflow: 'hidden',
+        }}
+      >
+        <video
+          src={project.videoUrl}
+          title={project.title}
+          controls
+          preload="metadata"
+          playsInline
+          style={{ width: '100%', height: '100%', display: 'block', objectFit: 'contain', background: '#000' }}
+        />
+      </div>
+      <div style={{ padding: '8px 0 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <span
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.6rem',
+            color: 'rgba(var(--accent-rgb), 0.4)',
+            letterSpacing: '0.08em',
+          }}
+        >
+          ● recorded demo
+        </span>
+        <a
+          href={project.videoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.6rem',
+            color: 'var(--text-muted)',
+            letterSpacing: '0.06em',
+            textDecoration: 'none',
+            marginLeft: 'auto',
+            opacity: 0.6,
+            transition: 'opacity 0.15s',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.6')}
+        >
+          open video ↗
+        </a>
+      </div>
+    </div>
+  )
+}
+
 function PreviewPanel({ project }: { project: Project }) {
   const canFloat = Boolean(project.floatingPreview)
   const [expanded, setExpanded] = useState(false)
@@ -726,6 +785,8 @@ function PreviewPanel({ project }: { project: Project }) {
 
   const previewContent = (isFloating: boolean) => project.embedUrl
     ? <EmbedPanel project={project} expanded={expanded} floating={isFloating} />
+    : project.videoUrl
+    ? <VideoPanel project={project} expanded={expanded} floating={isFloating} />
     : project.images?.length
     ? <ImageGallery images={project.images} expanded={expanded} floating={isFloating} />
     : null
