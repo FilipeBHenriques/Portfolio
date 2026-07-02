@@ -64,15 +64,24 @@ export function ProjectsDrawer({ isOpen, onClose, onToggle }: ProjectsDrawerProp
                 padding: '1.25rem 2rem 0.75rem',
                 borderBottom: '1px solid var(--border)',
               }}>
-                <div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem' }}>
                   <span style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.08em',
                     color: 'var(--text-muted)',
                   }}>
-                    Selected Work
+                    <span style={{ color: 'var(--accent)' }}>~</span> $ ls ~/projects/
+                    <span className="cursor-blink" style={{ marginLeft: '4px' }}>▌</span>
+                  </span>
+                  <span style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.62rem',
+                    letterSpacing: '0.1em',
+                    color: 'var(--text-muted)',
+                    opacity: 0.6,
+                  }}>
+                    {projects.length} entries
                   </span>
                 </div>
                 <Link

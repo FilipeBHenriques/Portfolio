@@ -14,7 +14,6 @@ export function TagFilter({ tags, active, onChange }: TagFilterProps) {
         display: 'flex',
         gap: '0.5rem',
         overflowX: 'auto',
-        paddingBottom: '0.5rem',
       }}
     >
       <Pill

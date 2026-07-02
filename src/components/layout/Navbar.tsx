@@ -1,6 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
+const LINKS = [
+  { to: '/projects', label: 'projects' },
+  { to: '/games', label: 'games' },
+  { to: '/progression', label: 'progression' },
+]
+
 export function Navbar() {
   const { pathname } = useLocation()
 
@@ -27,106 +33,67 @@ export function Navbar() {
     >
       <Link
         to="/"
-        className="font-mono"
         style={{
           color: 'var(--accent)',
           textDecoration: 'none',
           fontSize: '0.875rem',
           letterSpacing: '0.05em',
           fontFamily: 'var(--font-mono)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
         }}
       >
-        &gt; filipe.dev
+        <span style={{ color: 'var(--text-muted)' }}>&gt;</span>
+        filipe.dev
+        <span className="cursor-blink" style={{ fontSize: '0.75rem' }}>▌</span>
       </Link>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        <Link
-          to="/projects"
-          style={{
-            color: pathname === '/projects' ? 'var(--accent)' : 'var(--text-muted)',
-            textDecoration: 'none',
-            fontSize: '0.875rem',
-            fontFamily: 'var(--font-mono)',
-            letterSpacing: '0.05em',
-            padding: '4px 0',
-            borderBottom: pathname === '/projects'
-              ? '1px solid var(--accent)'
-              : '1px solid transparent',
-            transition: 'color 0.2s, border-color 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            if (pathname !== '/projects') {
-              e.currentTarget.style.color = 'var(--text-primary)'
-              e.currentTarget.style.borderBottomColor = 'var(--accent)'
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (pathname !== '/projects') {
-              e.currentTarget.style.color = 'var(--text-muted)'
-              e.currentTarget.style.borderBottomColor = 'transparent'
-            }
-          }}
-        >
-          Projects
-        </Link>
-        <Link
-          to="/games"
-          style={{
-            color: pathname === '/games' ? 'var(--accent)' : 'var(--text-muted)',
-            textDecoration: 'none',
-            fontSize: '0.875rem',
-            fontFamily: 'var(--font-mono)',
-            letterSpacing: '0.05em',
-            padding: '4px 0',
-            borderBottom: pathname === '/games'
-              ? '1px solid var(--accent)'
-              : '1px solid transparent',
-            transition: 'color 0.2s, border-color 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            if (pathname !== '/games') {
-              e.currentTarget.style.color = 'var(--text-primary)'
-              e.currentTarget.style.borderBottomColor = 'var(--accent)'
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (pathname !== '/games') {
-              e.currentTarget.style.color = 'var(--text-muted)'
-              e.currentTarget.style.borderBottomColor = 'transparent'
-            }
-          }}
-        >
-          Games
-        </Link>
-        <Link
-          to="/progression"
-          style={{
-            color: pathname === '/progression' ? 'var(--accent)' : 'var(--text-muted)',
-            textDecoration: 'none',
-            fontSize: '0.875rem',
-            fontFamily: 'var(--font-mono)',
-            letterSpacing: '0.05em',
-            padding: '4px 0',
-            borderBottom: pathname === '/progression'
-              ? '1px solid var(--accent)'
-              : '1px solid transparent',
-            transition: 'color 0.2s, border-color 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            if (pathname !== '/progression') {
-              e.currentTarget.style.color = 'var(--text-primary)'
-              e.currentTarget.style.borderBottomColor = 'var(--accent)'
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (pathname !== '/progression') {
-              e.currentTarget.style.color = 'var(--text-muted)'
-              e.currentTarget.style.borderBottomColor = 'transparent'
-            }
-          }}
-        >
-          Progression
-        </Link>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem' }}>
+        {LINKS.map((link) => {
+          const active = pathname === link.to || pathname.startsWith(`${link.to}/`)
+          return (
+            <Link
+              key={link.to}
+              to={link.to}
+              style={{
+                position: 'relative',
+                color: active ? 'var(--accent)' : 'var(--text-muted)',
+                textDecoration: 'none',
+                fontSize: '0.8125rem',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.05em',
+                padding: '4px 2px',
+                transition: 'color 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                if (!active) e.currentTarget.style.color = 'var(--text-primary)'
+              }}
+              onMouseLeave={(e) => {
+                if (!active) e.currentTarget.style.color = 'var(--text-muted)'
+              }}
+            >
+              <span style={{ color: active ? 'var(--accent)' : 'transparent', transition: 'color 0.2s' }}>
+                ./
+              </span>
+              {link.label}
+              {active && (
+                <motion.span
+                  layoutId="nav-underline"
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    bottom: '-2px',
+                    height: '1px',
+                    background: 'var(--accent)',
+                    boxShadow: '0 0 6px rgba(var(--accent-rgb), 0.8)',
+                  }}
+                />
+              )}
+            </Link>
+          )
+        })}
       </div>
     </motion.nav>
   )

@@ -1,21 +1,46 @@
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Code2, ExternalLink } from 'lucide-react'
+import { Code2, ExternalLink, ArrowUpRight } from 'lucide-react'
 import type { Project } from '@/data/projects'
 
-export function ProjectCard({ project }: { project: Project }) {
+const TILT_MAX = 5 // degrees
+
+export function ProjectCard({ project, index }: { project: Project; index?: number }) {
   const articleRef = useRef<HTMLElement>(null)
   const navigate = useNavigate()
+
+  const handleTilt = (e: React.MouseEvent) => {
+    const el = articleRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width - 0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5
+    el.style.transform = `perspective(900px) rotateX(${-py * TILT_MAX}deg) rotateY(${px * TILT_MAX}deg) translateY(-4px)`
+  }
+
+  const resetTilt = () => {
+    const el = articleRef.current
+    if (!el) return
+    el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)'
+    el.style.borderColor = 'var(--border)'
+    el.style.boxShadow = 'none'
+  }
 
   return (
     <motion.article
       ref={articleRef}
       layoutId={`card-${project.id}`}
       layout
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
       onClick={() => navigate(`/projects/${project.id}`)}
+      onMouseMove={handleTilt}
+      onMouseEnter={() => {
+        if (articleRef.current) {
+          articleRef.current.style.borderColor = 'rgba(var(--accent-rgb), 0.55)'
+          articleRef.current.style.boxShadow = 'var(--glow-md)'
+        }
+      }}
+      onMouseLeave={resetTilt}
       style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border)',
@@ -25,32 +50,26 @@ export function ProjectCard({ project }: { project: Project }) {
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        transition: 'border-color 0.2s, box-shadow 0.2s',
-      }}
-      onMouseEnter={() => {
-        if (articleRef.current) {
-          articleRef.current.style.borderColor = 'var(--accent)'
-          articleRef.current.style.boxShadow = 'var(--glow-md)'
-        }
-      }}
-      onMouseLeave={() => {
-        if (articleRef.current) {
-          articleRef.current.style.borderColor = 'var(--border)'
-          articleRef.current.style.boxShadow = 'none'
-        }
+        height: '100%',
+        transition: 'border-color 0.25s, box-shadow 0.25s, transform 0.15s ease-out',
+        transformStyle: 'preserve-3d',
+        willChange: 'transform',
       }}
     >
       {/* Media area */}
-      <div style={{
-        height: '180px',
-        background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.07) 0%, rgba(var(--accent-rgb), 0.02) 50%, rgba(8,8,8,0.5) 100%)',
-        borderBottom: '1px solid var(--border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
+      <div
+        className="scanlines"
+        style={{
+          height: '190px',
+          background: 'linear-gradient(135deg, rgba(var(--accent-rgb), 0.07) 0%, rgba(var(--accent-rgb), 0.02) 50%, rgba(8,8,8,0.5) 100%)',
+          borderBottom: '1px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
         {project.images && project.images.length > 0 ? (
           <div style={{ width: '100%', height: '100%', position: 'relative' }}>
             <img
@@ -58,7 +77,7 @@ export function ProjectCard({ project }: { project: Project }) {
               alt={project.title}
               style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
             />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 60%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 55%)' }} />
             {project.icon && (
               <img
                 src={project.icon}
@@ -69,12 +88,6 @@ export function ProjectCard({ project }: { project: Project }) {
           </div>
         ) : project.videoUrl ? (
           <div style={{ width: '100%', height: '100%', position: 'relative', background: 'radial-gradient(circle at 50% 20%, rgba(var(--accent-rgb), 0.18), transparent 35%), linear-gradient(180deg, rgba(10,16,10,0.95) 0%, rgba(8,8,8,0.98) 100%)' }}>
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(86,255,86,0.07) 2px, rgba(86,255,86,0.07) 4px)',
-              pointerEvents: 'none',
-            }} />
             <div style={{
               position: 'absolute',
               inset: '18px',
@@ -149,24 +162,16 @@ export function ProjectCard({ project }: { project: Project }) {
             />
           </div>
         ) : (
-          <>
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
-              pointerEvents: 'none',
-            }} />
-            <span style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.65rem',
-              color: 'rgba(var(--accent-rgb), 0.25)',
-              letterSpacing: '0.1em',
-              position: 'relative',
-              zIndex: 1,
-            }}>
-              [ {project.id} ]
-            </span>
-          </>
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.65rem',
+            color: 'rgba(var(--accent-rgb), 0.25)',
+            letterSpacing: '0.1em',
+            position: 'relative',
+            zIndex: 1,
+          }}>
+            [ {project.id} ]
+          </span>
         )}
 
         <ActionButtons project={project} />
@@ -174,14 +179,28 @@ export function ProjectCard({ project }: { project: Project }) {
 
       {/* Content */}
       <div style={{ padding: '1.25rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-        <h3 style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: '1rem',
-          fontWeight: 600,
-          color: 'var(--text-primary)',
-        }}>
-          {project.title}
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
+          {index !== undefined && (
+            <span
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.65rem',
+                color: 'rgba(var(--accent-rgb), 0.55)',
+                letterSpacing: '0.08em',
+              }}
+            >
+              {String(index + 1).padStart(2, '0')}
+            </span>
+          )}
+          <h3 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.05rem',
+            fontWeight: 600,
+            color: 'var(--text-primary)',
+          }}>
+            {project.title}
+          </h3>
+        </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
           {project.tags.map((tag) => (
@@ -216,6 +235,44 @@ export function ProjectCard({ project }: { project: Project }) {
         }}>
           {project.description}
         </p>
+
+        {/* Footer */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderTop: '1px solid var(--border)',
+            paddingTop: '0.75rem',
+            marginTop: '0.25rem',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.65rem',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: 'var(--accent)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+            }}
+          >
+            open project
+            <ArrowUpRight size={12} />
+          </span>
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              color: 'var(--text-muted)',
+              letterSpacing: '0.06em',
+            }}
+          >
+            cd {project.id}
+          </span>
+        </div>
       </div>
 
       {project.featured && (
@@ -231,6 +288,7 @@ export function ProjectCard({ project }: { project: Project }) {
           background: 'var(--accent)',
           borderRadius: '2px',
           padding: '2px 6px',
+          zIndex: 2,
         }}>
           Featured
         </div>
@@ -250,6 +308,7 @@ function ActionButtons({ project }: { project: Project }) {
         right: '10px',
         display: 'flex',
         gap: '0.375rem',
+        zIndex: 2,
       }}
       onClick={(e) => e.stopPropagation()}
     >

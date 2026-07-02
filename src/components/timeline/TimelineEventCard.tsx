@@ -73,11 +73,14 @@ function Card({
       style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border)',
+        borderLeft: '2px solid rgba(var(--accent-rgb), 0.6)',
         borderRadius: '4px',
         padding: '1.25rem 1.5rem',
-        maxWidth: '380px',
+        maxWidth: '400px',
         width: '100%',
         transition: 'border-color 0.2s, box-shadow 0.2s',
+        position: 'relative',
+        overflow: 'hidden',
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement
@@ -90,6 +93,27 @@ function Card({
         el.style.boxShadow = 'none'
       }}
     >
+      {/* Type badge */}
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.56rem',
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          color: 'var(--accent)',
+          background: 'rgba(var(--accent-rgb), 0.08)',
+          border: '1px solid rgba(var(--accent-rgb), 0.2)',
+          borderRadius: '2px',
+          padding: '2px 8px',
+          marginBottom: '0.85rem',
+        }}
+      >
+        {event.type === 'work' ? 'work' : 'education'}
+      </div>
+
       {/* Card header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', marginBottom: '0.75rem' }}>
         <Icon

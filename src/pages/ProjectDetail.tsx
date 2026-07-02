@@ -4,6 +4,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom'
 import { motion, type Variants } from 'framer-motion'
 import { Code2, ExternalLink, ArrowLeft, ChevronLeft, ChevronRight, Shield } from 'lucide-react'
 import { PageWrapper } from '@/components/layout/PageWrapper'
+import { DecodeText } from '@/components/hero/DecodeText'
 import { projects, type Project } from '@/data/projects'
 import { fadeUp, stagger } from '@/lib/motionVariants'
 
@@ -194,16 +195,29 @@ export function ProjectDetail() {
                 }
               >
                 <ArrowLeft size={13} />
-                Projects
+                <span style={{ opacity: 0.7 }}>~/projects/</span>
+                <span style={{ color: 'var(--accent)' }}>{project.id}</span>
               </Link>
             </motion.div>
 
             {/* Title block */}
             <motion.div variants={fadeUp} style={{ marginBottom: '1.5rem' }}>
+              <p
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.1em',
+                  color: 'var(--text-muted)',
+                  marginBottom: '0.75rem',
+                }}
+              >
+                <span style={{ color: 'var(--accent)' }}>$</span> cat README.md
+                <span className="cursor-blink" style={{ marginLeft: '4px' }}>▌</span>
+              </p>
               <h1
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(3rem, 6vw, 5rem)',
+                  fontSize: 'clamp(2.6rem, 6vw, 4.5rem)',
                   fontWeight: 700,
                   letterSpacing: '-0.03em',
                   color: 'var(--text-primary)',
@@ -211,7 +225,7 @@ export function ProjectDetail() {
                   marginBottom: '0.75rem',
                 }}
               >
-                {project.title}
+                <DecodeText text={project.title} delay={150} />
               </h1>
               <div
                 style={{
@@ -224,59 +238,33 @@ export function ProjectDetail() {
               />
             </motion.div>
 
-            {/* Tags */}
-            <motion.div
-              variants={fadeUp}
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '0.4rem',
-                marginBottom: '1.75rem',
-              }}
-            >
-              {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
-                    letterSpacing: '0.08em',
-                    color: 'rgba(var(--accent-rgb), 0.75)',
-                    background: 'rgba(var(--accent-rgb), 0.07)',
-                    border: '1px solid rgba(var(--accent-rgb), 0.15)',
-                    borderRadius: '2px',
-                    padding: '3px 8px',
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
+            {/* Overview */}
+            <motion.div variants={fadeUp} style={{ marginBottom: '2rem' }}>
+              <p
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.75rem',
+                  color: 'var(--accent)',
+                  letterSpacing: '0.08em',
+                  marginBottom: '1rem',
+                }}
+              >
+                {'// overview'}
+              </p>
+              <p
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '1rem',
+                  color: 'var(--text-muted)',
+                  lineHeight: 1.8,
+                  maxWidth: '520px',
+                  borderLeft: '2px solid rgba(var(--accent-rgb), 0.25)',
+                  paddingLeft: '1.25rem',
+                }}
+              >
+                {project.longDescription ?? project.description}
+              </p>
             </motion.div>
-
-            {/* Description */}
-            <motion.p
-              variants={fadeUp}
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '1rem',
-                color: 'var(--text-muted)',
-                lineHeight: 1.8,
-                maxWidth: '520px',
-                marginBottom: '1.5rem',
-              }}
-            >
-              {project.longDescription ?? project.description}
-            </motion.p>
-
-            {/* Divider */}
-            <motion.hr
-              variants={fadeUp}
-              style={{
-                border: 'none',
-                borderTop: '1px solid var(--border)',
-                margin: '0 0 2rem 0',
-              }}
-            />
 
             {/* Tech stack */}
             <motion.div variants={fadeUp} style={{ marginBottom: '2rem' }}>
@@ -312,7 +300,19 @@ export function ProjectDetail() {
               </div>
             </motion.div>
 
-            {/* CTA row */}
+            {/* Links */}
+            <motion.p
+              variants={fadeUp}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.75rem',
+                color: 'var(--accent)',
+                letterSpacing: '0.08em',
+                marginBottom: '1rem',
+              }}
+            >
+              {'// links'}
+            </motion.p>
             <motion.div
               variants={fadeUp}
               style={{
@@ -474,8 +474,100 @@ export function ProjectDetail() {
             <PreviewPanel project={project} />
           </motion.div>
         </div>
+
+        <ProjectPagerNav currentId={project.id} />
       </div>
     </PageWrapper>
+  )
+}
+
+function ProjectPagerNav({ currentId }: { currentId: string }) {
+  const index = projects.findIndex((p) => p.id === currentId)
+  if (index === -1 || projects.length < 2) return null
+  const prev = projects[(index - 1 + projects.length) % projects.length]
+  const next = projects[(index + 1) % projects.length]
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.45 }}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '1rem',
+        marginTop: '4rem',
+        borderTop: '1px solid var(--border)',
+        paddingTop: '1.5rem',
+      }}
+    >
+      <PagerCard project={prev} direction="prev" />
+      <PagerCard project={next} direction="next" />
+    </motion.div>
+  )
+}
+
+function PagerCard({ project, direction }: { project: Project; direction: 'prev' | 'next' }) {
+  const isNext = direction === 'next'
+  return (
+    <Link
+      to={`/projects/${project.id}`}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.4rem',
+        alignItems: isNext ? 'flex-end' : 'flex-start',
+        textAlign: isNext ? 'right' : 'left',
+        padding: '1.1rem 1.25rem',
+        border: '1px solid var(--border)',
+        borderRadius: '4px',
+        background: 'var(--bg-surface)',
+        textDecoration: 'none',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(var(--accent-rgb), 0.5)'
+        e.currentTarget.style.boxShadow = 'var(--glow-sm)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'var(--border)'
+        e.currentTarget.style.boxShadow = 'none'
+      }}
+    >
+      <span
+        style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.6rem',
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          color: 'var(--text-muted)',
+        }}
+      >
+        {isNext ? 'next →' : '← prev'}
+      </span>
+      <span
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '0.95rem',
+          fontWeight: 600,
+          color: 'var(--text-primary)',
+        }}
+      >
+        {project.title}
+      </span>
+      <span
+        style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.62rem',
+          color: 'var(--accent)',
+          letterSpacing: '0.06em',
+          opacity: 0.75,
+        }}
+      >
+        cd {project.id}
+      </span>
+    </Link>
   )
 }
 

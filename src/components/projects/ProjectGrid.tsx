@@ -29,7 +29,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
               gridColumn: project.featured ? 'span 2' : 'span 1',
             }}
           >
-            <ProjectCard project={project} />
+            <ProjectCard project={project} index={i} />
           </motion.div>
         ))}
       </AnimatePresence>
